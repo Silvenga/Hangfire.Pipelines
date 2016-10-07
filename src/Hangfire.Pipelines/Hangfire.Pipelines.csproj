@@ -52,8 +52,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\PipelineContext.cs" />
+    <Compile Include="Models\IPipelineTask.cs" />
     <Compile Include="PipelineTemplate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Helpers\JetBrainsAnnotations.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

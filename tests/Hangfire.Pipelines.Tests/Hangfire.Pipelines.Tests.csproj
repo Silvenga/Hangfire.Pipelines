@@ -72,10 +72,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PipelineTemplateFacts.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Hangfire.Pipelines\Hangfire.Pipelines.csproj">
+      <Project>{531EC739-590F-4924-A81C-D1E3DD44EADD}</Project>
+      <Name>Hangfire.Pipelines</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
