@@ -2,6 +2,7 @@
 using System.Linq;
 
 using Hangfire.ActivationExtensions.Interceptor;
+using Hangfire.Pipelines.Core;
 using Hangfire.Pipelines.Models;
 using Hangfire.Pipelines.Storage;
 
@@ -34,31 +35,9 @@ namespace Hangfire.Pipelines.Attributes
             }
 
             var id = context.GetJobParameter<Guid>("PipelineId");
-            var pipelineContext = CreateContext(pipelineTaskType.GenericTypeArguments, _pipelineStorage, id);
-            SetContext(jobType, activatedJob, pipelineContext);
-
-            var basicContext = (IBasicPipelineContext) pipelineContext;
-            basicContext.Load();
-        }
-
-        private void SetContext(Type jobType, object activatedJob, object pipelineContext)
-        {
-            var method = jobType.GetProperty(nameof(IPipelineTask<object>.PipelineContext));
-            method.SetValue(activatedJob, pipelineContext);
-        }
-
-        private object GetContext(Type jobType, object activatedJob)
-        {
-            var method = jobType.GetProperty(nameof(IPipelineTask<object>.PipelineContext));
-            return method.GetValue(activatedJob);
-        }
-
-        private object CreateContext(Type[] typeArgs, [NotNull] IPipelineStorage pipelineStorage, Guid pipelineId)
-        {
-            var type = typeof(PipelineContext<>);
-            var genericType = type.MakeGenericType(typeArgs);
-            var instance = Activator.CreateInstance(genericType, pipelineStorage, pipelineId);
-            return instance;
+            var pipelineContext = ContextHelper.CreateContext(pipelineTaskType.GenericTypeArguments, _pipelineStorage, id);
+            ContextHelper.SetContext(jobType, activatedJob, pipelineContext);
+            ContextHelper.Setup(pipelineContext);
         }
 
         public void OnScopeCreating(JobActivatorContext context)
@@ -71,18 +50,17 @@ namespace Hangfire.Pipelines.Attributes
 
         public void OnScopeDisposing(Type jobType, object activatedJob, JobActivatorContext context)
         {
-            var isPipelineTask = jobType.GetInterfaces().SingleOrDefault(x =>
+            var pipelineTaskType = jobType.GetInterfaces().SingleOrDefault(x =>
                                              x.IsGenericType &&
                                              x.GetGenericTypeDefinition() == typeof(IPipelineTask<>));
 
-            if (isPipelineTask == null)
+            if (pipelineTaskType == null)
             {
                 return;
             }
 
-            var pipelineContext = GetContext(isPipelineTask, activatedJob);
-            var basicContext = (IBasicPipelineContext) pipelineContext;
-            basicContext.Save();
+            var pipelineContext = ContextHelper.GetContext(jobType, activatedJob);
+            ContextHelper.TearDown(pipelineContext);
         }
 
         public void OnScopeDisposed(Type jobType, object activatedJob, JobActivatorContext context)

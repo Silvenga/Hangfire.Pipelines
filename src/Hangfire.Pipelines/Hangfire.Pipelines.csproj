@@ -65,6 +65,7 @@
     <Compile Include="Attributes\ActivatorIntercpeter.cs" />
     <Compile Include="Attributes\AfterMaterializationAttribute.cs" />
     <Compile Include="Attributes\MaterializeStateAttribute.cs" />
+    <Compile Include="Core\ContextHelper.cs" />
     <Compile Include="Expressions\ExpressionContainer.cs" />
     <Compile Include="Expressions\HangfireExpressionFactory.cs" />
     <Compile Include="Expressions\IExpressionFactory.cs" />
