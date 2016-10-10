@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Hangfire.ActivationExtensions, Version=1.0.21.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Hangfire.ActivationExtensions.1.0.21\lib\net45\Hangfire.ActivationExtensions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Hangfire.Core, Version=1.6.5.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Hangfire.Core.1.6.5\lib\net45\Hangfire.Core.dll</HintPath>
       <Private>True</Private>
@@ -52,6 +56,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\AfterMaterializationAttribute.cs" />
+    <Compile Include="Attributes\MaterializeStateAttribute.cs" />
+    <Compile Include="Models\HangfirePipelineStorage.cs" />
+    <Compile Include="Models\IPipelineStorage.cs" />
     <Compile Include="Models\PipelineContext.cs" />
     <Compile Include="Models\IPipelineTask.cs" />
     <Compile Include="PipelineTemplate.cs" />

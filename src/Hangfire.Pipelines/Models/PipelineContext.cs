@@ -1,12 +1,28 @@
-﻿namespace Hangfire.Pipelines.Models
+﻿using JetBrains.Annotations;
+
+namespace Hangfire.Pipelines.Models
 {
     public class PipelineContext<T>
     {
-        public virtual T Entity { get; }
+        private readonly IPipelineStorage _pipelineStorage;
 
-        public PipelineContext(T entity)
+        [CanBeNull]
+        public virtual T Entity { get; private set; }
+
+        public PipelineContext([NotNull] IPipelineStorage pipelineStorage)
         {
-            Entity = entity;
+            _pipelineStorage = pipelineStorage;
+            Load();
+        }
+
+        public void Load()
+        {
+            Entity = _pipelineStorage.Get<T>("");
+        }
+
+        public void Commit()
+        {
+            _pipelineStorage.Set("", Entity);
         }
     }
 }
