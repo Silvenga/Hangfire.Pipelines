@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Hangfire.Pipelines.Models
+namespace Hangfire.Pipelines.Storage
 {
     public interface IPipelineStorage
     {

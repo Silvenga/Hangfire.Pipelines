@@ -1,11 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hangfire.Pipelines", "src\Hangfire.Pipelines\Hangfire.Pipelines.csproj", "{531EC739-590F-4924-A81C-D1E3DD44EADD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hangfire.Pipelines.Tests", "tests\Hangfire.Pipelines.Tests\Hangfire.Pipelines.Tests.csproj", "{7438CDF8-6F78-4CD5-9F31-5015162CED4F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A64DECA6-88E2-401B-9316-189A56CDA8A9}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.config = .nuget\NuGet.config
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hangfire.Pipelines.Sample", "src\Hangfire.Pipelines.Sample\Hangfire.Pipelines.Sample.csproj", "{71B83596-A2B0-462E-9EF3-C93D02A7E31A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +28,10 @@ Global
 		{7438CDF8-6F78-4CD5-9F31-5015162CED4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7438CDF8-6F78-4CD5-9F31-5015162CED4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7438CDF8-6F78-4CD5-9F31-5015162CED4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71B83596-A2B0-462E-9EF3-C93D02A7E31A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71B83596-A2B0-462E-9EF3-C93D02A7E31A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71B83596-A2B0-462E-9EF3-C93D02A7E31A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71B83596-A2B0-462E-9EF3-C93D02A7E31A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

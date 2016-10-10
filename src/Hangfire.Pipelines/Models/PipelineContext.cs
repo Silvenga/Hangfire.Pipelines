@@ -1,33 +1,41 @@
 ﻿using System;
 
+using Hangfire.Pipelines.Storage;
+
 using JetBrains.Annotations;
 
 namespace Hangfire.Pipelines.Models
 {
-    public class PipelineContext<T>
+    public class PipelineContext<T> : IBasicPipelineContext
     {
+        private const string PipelineEntityKey = "PipelineEntity";
         private readonly IPipelineStorage _pipelineStorage;
 
         [CanBeNull]
-        public virtual T Entity { get; private set; }
+        public virtual T Entity { get; set; }
 
-        public Guid PipelineId { get; }
+        public virtual Guid PipelineId { get; }
 
         public PipelineContext([NotNull] IPipelineStorage pipelineStorage, Guid pipelineId)
         {
             _pipelineStorage = pipelineStorage;
             PipelineId = pipelineId;
-            Load();
         }
 
-        public void Load()
+        public virtual void Load()
         {
-            Entity = _pipelineStorage.Get<T>(PipelineId, "");
+            Entity = _pipelineStorage.Get<T>(PipelineId, PipelineEntityKey);
         }
 
-        public void Commit()
+        public virtual void Save()
         {
-            _pipelineStorage.Set(PipelineId, "", Entity);
+            _pipelineStorage.Set(PipelineId, PipelineEntityKey, Entity);
         }
+    }
+
+    public interface IBasicPipelineContext
+    {
+        void Load();
+        void Save();
     }
 }
