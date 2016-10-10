@@ -1,8 +1,10 @@
-﻿namespace Hangfire.Pipelines.Models
+﻿using System;
+
+namespace Hangfire.Pipelines.Models
 {
     public interface IPipelineStorage
     {
-        T Get<T>(string key);
-        void Set(string key, object value);
+        T Get<T>(Guid pipelineId, string key);
+        void Set(Guid pipelineId, string key, object value);
     }
 }

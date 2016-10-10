@@ -1,4 +1,6 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+
+using JetBrains.Annotations;
 
 namespace Hangfire.Pipelines.Models
 {
@@ -9,20 +11,23 @@ namespace Hangfire.Pipelines.Models
         [CanBeNull]
         public virtual T Entity { get; private set; }
 
-        public PipelineContext([NotNull] IPipelineStorage pipelineStorage)
+        public Guid PipelineId { get; }
+
+        public PipelineContext([NotNull] IPipelineStorage pipelineStorage, Guid pipelineId)
         {
             _pipelineStorage = pipelineStorage;
+            PipelineId = pipelineId;
             Load();
         }
 
         public void Load()
         {
-            Entity = _pipelineStorage.Get<T>("");
+            Entity = _pipelineStorage.Get<T>(PipelineId, "");
         }
 
         public void Commit()
         {
-            _pipelineStorage.Set("", Entity);
+            _pipelineStorage.Set(PipelineId, "", Entity);
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Hangfire.Pipelines.Models
+﻿using System;
+
+namespace Hangfire.Pipelines.Models
 {
     public class HangfirePipelineStorage : IPipelineStorage
     {
@@ -9,12 +11,12 @@
             _activatorContext = activatorContext;
         }
 
-        public T Get<T>(string key)
+        public T Get<T>(Guid pipelineId, string key)
         {
             return _activatorContext.GetJobParameter<T>(key);
         }
 
-        public void Set(string key, object value)
+        public void Set(Guid pipelineId, string key, object value)
         {
             _activatorContext.SetJobParameter(key, value);
         }
