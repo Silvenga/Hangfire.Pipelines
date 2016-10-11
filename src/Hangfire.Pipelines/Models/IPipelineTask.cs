@@ -2,6 +2,6 @@
 {
     public interface IPipelineTask<T>
     {
-        PipelineContext<T> PipelineContext { get; set; }
+        IPipelineContext<T> PipelineContext { get; set; }
     }
 }

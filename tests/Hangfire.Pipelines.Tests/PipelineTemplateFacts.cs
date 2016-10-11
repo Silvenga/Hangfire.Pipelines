@@ -37,6 +37,6 @@ namespace Hangfire.Pipelines.Tests
         {
         }
 
-        public PipelineContext<TypeFixture> PipelineContext { get; set; }
+        public IPipelineContext<TypeFixture> PipelineContext { get; set; }
     }
 }

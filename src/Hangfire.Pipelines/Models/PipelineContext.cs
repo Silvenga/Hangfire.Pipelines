@@ -6,15 +6,28 @@ using JetBrains.Annotations;
 
 namespace Hangfire.Pipelines.Models
 {
-    public class PipelineContext<T> : IBasicPipelineContext
+    public interface IPipelineContext
+    {
+        Guid PipelineId { get; }
+
+        void Load();
+        void Save();
+    }
+
+    public interface IPipelineContext<T> : IPipelineContext
+    {
+        T Entity { get; set; }
+    }
+
+    public class PipelineContext<T> : IPipelineContext<T>
     {
         private const string PipelineEntityKey = "PipelineEntity";
         private readonly IPipelineStorage _pipelineStorage;
 
         [CanBeNull]
-        public virtual T Entity { get; set; }
+        public T Entity { get; set; }
 
-        public virtual Guid PipelineId { get; }
+        public Guid PipelineId { get; }
 
         public PipelineContext([NotNull] IPipelineStorage pipelineStorage, Guid pipelineId)
         {
@@ -22,20 +35,14 @@ namespace Hangfire.Pipelines.Models
             PipelineId = pipelineId;
         }
 
-        public virtual void Load()
+        public void Load()
         {
             Entity = _pipelineStorage.Get<T>(PipelineId, PipelineEntityKey);
         }
 
-        public virtual void Save()
+        public void Save()
         {
             _pipelineStorage.Set(PipelineId, PipelineEntityKey, Entity);
         }
-    }
-
-    public interface IBasicPipelineContext
-    {
-        void Load();
-        void Save();
     }
 }

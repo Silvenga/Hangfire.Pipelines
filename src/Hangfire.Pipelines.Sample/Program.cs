@@ -54,7 +54,7 @@ namespace Hangfire.Pipelines.Sample
 
     public class TestStep : IPipelineTask<string>
     {
-        public PipelineContext<string> PipelineContext { get; set; }
+        public IPipelineContext<string> PipelineContext { get; set; }
 
         public void Run()
         {

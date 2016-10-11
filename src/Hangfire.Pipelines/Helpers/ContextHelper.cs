@@ -9,11 +9,6 @@ namespace Hangfire.Pipelines.Helpers
 {
     public static class ContextHelper
     {
-        public static void BeforeStart()
-        {
-
-        }
-
         public static void SetContext(Type jobType, object pipelineTask, object pipelineContext)
         {
             var method = jobType.GetProperty(nameof(IPipelineTask<object>.PipelineContext));
@@ -36,13 +31,13 @@ namespace Hangfire.Pipelines.Helpers
 
         public static void Setup(object pipelineContext)
         {
-            var basicContext = (IBasicPipelineContext) pipelineContext;
+            var basicContext = (IPipelineContext) pipelineContext;
             basicContext.Load();
         }
 
         public static void TearDown(object pipelineContext)
         {
-            var basicContext = (IBasicPipelineContext) pipelineContext;
+            var basicContext = (IPipelineContext) pipelineContext;
             basicContext.Save();
         }
     }
