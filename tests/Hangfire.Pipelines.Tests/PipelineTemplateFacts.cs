@@ -2,7 +2,6 @@
 using System.Linq.Expressions;
 
 using Hangfire.Pipelines.Core;
-using Hangfire.Pipelines.Expressions;
 using Hangfire.Pipelines.Models;
 
 using NSubstitute;
@@ -16,13 +15,13 @@ namespace Hangfire.Pipelines.Tests
         [Fact]
         public void Can_add_step()
         {
-            var factory = Substitute.For<IExpressionFactory>();
-            var template = new PipelineDefinition<TypeFixture>(factory, null);
+            ////var factory = Substitute.For<IExpressionFactory>();
+            //var template = new PipelineDefinition<TypeFixture>(factory, null);
 
-            Expression<Action<StepFixture>> expression = x => x.Instance();
+            //Expression<Action<StepFixture>> expression = x => x.Instance();
 
-            // Act
-            template.AddStep(expression);
+            //// Act
+            //template.AddStep(expression);
 
             // Assert
         }

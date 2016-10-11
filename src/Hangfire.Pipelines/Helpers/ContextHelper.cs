@@ -5,14 +5,19 @@ using Hangfire.Pipelines.Storage;
 
 using JetBrains.Annotations;
 
-namespace Hangfire.Pipelines.Core
+namespace Hangfire.Pipelines.Helpers
 {
     public static class ContextHelper
     {
-        public static void SetContext(Type jobType, object activatedJob, object pipelineContext)
+        public static void BeforeStart()
+        {
+
+        }
+
+        public static void SetContext(Type jobType, object pipelineTask, object pipelineContext)
         {
             var method = jobType.GetProperty(nameof(IPipelineTask<object>.PipelineContext));
-            method.SetValue(activatedJob, pipelineContext);
+            method.SetValue(pipelineTask, pipelineContext);
         }
 
         public static object GetContext(Type jobType, object activatedJob)
@@ -29,15 +34,15 @@ namespace Hangfire.Pipelines.Core
             return instance;
         }
 
-        public static void Setup(object context)
+        public static void Setup(object pipelineContext)
         {
-            var basicContext = (IBasicPipelineContext) context;
+            var basicContext = (IBasicPipelineContext) pipelineContext;
             basicContext.Load();
         }
 
-        public static void TearDown(object context)
+        public static void TearDown(object pipelineContext)
         {
-            var basicContext = (IBasicPipelineContext) context;
+            var basicContext = (IBasicPipelineContext) pipelineContext;
             basicContext.Save();
         }
     }

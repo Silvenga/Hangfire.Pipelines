@@ -2,19 +2,19 @@
 using System.Linq;
 
 using Hangfire.ActivationExtensions.Interceptor;
-using Hangfire.Pipelines.Core;
+using Hangfire.Pipelines.Helpers;
 using Hangfire.Pipelines.Models;
 using Hangfire.Pipelines.Storage;
 
 using JetBrains.Annotations;
 
-namespace Hangfire.Pipelines.Attributes
+namespace Hangfire.Pipelines.Core
 {
-    public class ActivatorInterceptor : IJobActivatorFilter
+    public class HangfireActivatorInterceptor : IJobActivatorFilter
     {
         [NotNull] private readonly IPipelineStorage _pipelineStorage;
 
-        public ActivatorInterceptor([NotNull] IPipelineStorage pipelineStorage)
+        public HangfireActivatorInterceptor([NotNull] IPipelineStorage pipelineStorage)
         {
             _pipelineStorage = pipelineStorage;
         }

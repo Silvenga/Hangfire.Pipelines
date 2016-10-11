@@ -1,8 +1,7 @@
 ﻿using System;
 
 using Hangfire.Pipelines.Core;
-using Hangfire.Pipelines.Expressions;
-using Hangfire.Pipelines.Helpers;
+using Hangfire.Pipelines.Executors;
 using Hangfire.Pipelines.Models;
 using Hangfire.Pipelines.Storage;
 
@@ -26,30 +25,27 @@ namespace Hangfire.Pipelines.Sample
 
             //var client = new BackgroundJobClient();
 
-            //IExpressionFactory factory = new HangfireExpressionFactory(client);
-
-            //var testPipeline = new PipelineDefinition<string>(factory, memory);
+            //var testPipeline = new PipelineDefinition<string>(memory);
 
             //testPipeline.AddStep<TestStep>(x => x.Run());
             //testPipeline.AddStep<TestStep>(x => x.Run2());
 
-            //testPipeline.Process("test");
+            //var executor = testPipeline.CreateExecutor();
+
+            //IStepExecutor stepExecutor = new HangfireStepExecutor(client);
+            //executor.Process("test", stepExecutor);
 
             //Console.WriteLine("Ready...");
             //Console.ReadLine();
 
-            GlobalConfiguration.Configuration
-                .UsePipelines(memory);
-
-            Console.WriteLine("Start?");
-
-            IExpressionFactory factory = new MemoryExpressionFactory(memory);
-            var testPipeline = new PipelineDefinition<string>(factory, memory);
+            var testPipeline = new PipelineDefinition<string>(memory);
+            var memoryEx = new MemoryStepExecutor(memory);
 
             testPipeline.AddStep<TestStep>(x => x.Run());
             testPipeline.AddStep<TestStep>(x => x.Run2());
 
-            testPipeline.Process("test");
+            var executor = testPipeline.CreateExecutor();
+            executor.Process("test", memoryEx);
 
             Console.WriteLine("Ready...");
             Console.ReadLine();

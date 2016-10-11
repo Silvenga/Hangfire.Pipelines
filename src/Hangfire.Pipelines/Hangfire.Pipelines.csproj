@@ -62,14 +62,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\ActivatorIntercpeter.cs" />
-    <Compile Include="Attributes\AfterMaterializationAttribute.cs" />
-    <Compile Include="Attributes\MaterializeStateAttribute.cs" />
-    <Compile Include="Core\ContextHelper.cs" />
-    <Compile Include="Expressions\ExpressionContainer.cs" />
-    <Compile Include="Expressions\HangfireExpressionFactory.cs" />
-    <Compile Include="Expressions\IExpressionFactory.cs" />
-    <Compile Include="Expressions\MemoryExpressionFactory.cs" />
+    <Compile Include="Core\HangfireActivatorInterceptor.cs" />
+    <Compile Include="Helpers\ContextHelper.cs" />
+    <Compile Include="Executors\HangfireStepExecutor.cs" />
+    <Compile Include="Executors\IStepExecutor.cs" />
+    <Compile Include="Core\PipelineExecutor.cs" />
+    <Compile Include="Executors\MemoryStepExecutor.cs" />
+    <Compile Include="Core\ExpressionContainer.cs" />
     <Compile Include="Helpers\GlobalConfigurationExtensions.cs" />
     <Compile Include="Storage\IPipelineStorage.cs" />
     <Compile Include="Models\PipelineContext.cs" />
@@ -83,6 +82,7 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

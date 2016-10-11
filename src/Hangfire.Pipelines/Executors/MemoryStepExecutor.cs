@@ -3,31 +3,22 @@ using System.Linq;
 using System.Linq.Expressions;
 
 using Hangfire.Pipelines.Core;
+using Hangfire.Pipelines.Helpers;
 using Hangfire.Pipelines.Models;
 using Hangfire.Pipelines.Storage;
 
-namespace Hangfire.Pipelines.Expressions
+namespace Hangfire.Pipelines.Executors
 {
-    public class MemoryExpressionFactory : IExpressionFactory
+    public class MemoryStepExecutor : IStepExecutor
     {
         private readonly IPipelineStorage _pipelineStorage;
 
-        public MemoryExpressionFactory(IPipelineStorage pipelineStorage)
+        public MemoryStepExecutor(IPipelineStorage pipelineStorage)
         {
             _pipelineStorage = pipelineStorage;
         }
 
-        public ExpressionContainer Create<T>(Expression<Action<T>> expression)
-        {
-            var action = expression.Compile();
-
-            var container = new ExpressionContainer(pipelineId => RunNew(pipelineId, action),
-                (pipelineId, parrentId) => RunNew(pipelineId, action));
-
-            return container;
-        }
-
-        private string RunNew<T>(Guid pipelineId, Action<T> action)
+        public string RunNew<T>(Expression<Action<T>> expression, Guid pipelineId)
         {
             var activatedJob = CreateObject<T>();
             var jobType = typeof(T);
@@ -44,11 +35,16 @@ namespace Hangfire.Pipelines.Expressions
             ContextHelper.SetContext(jobType, activatedJob, pipelineContext);
             ContextHelper.Setup(pipelineContext);
 
-            action.Invoke(activatedJob);
+            expression.Compile().Invoke(activatedJob);
 
             ContextHelper.TearDown(pipelineContext);
 
             return Guid.NewGuid().ToString("N");
+        }
+
+        public string RunContinuation<T>(Expression<Action<T>> expression, Guid pipelineId, string parrentId)
+        {
+            return RunNew(expression, pipelineId);
         }
 
         private T CreateObject<T>()
