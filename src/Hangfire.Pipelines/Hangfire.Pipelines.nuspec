@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>Silvenga</authors>
+    <owners>Silvenga</owners>
+    <licenseUrl>https://github.com/Silvenga/Hangfire.Pipelines/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/Silvenga/Hangfire.Pipelines</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>TODO</description>
+    <copyright>Copyright 2016</copyright>
+  </metadata>
+</package>
