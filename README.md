@@ -2,6 +2,19 @@
 
 [![AppVeyor](https://img.shields.io/appveyor/ci/Silvenga/hangfire-pipelines.svg?maxAge=2592000&style=flat-square)](https://ci.appveyor.com/project/Silvenga/hangfire-pipelines)
 
+## Install
+
+Latest releases can be found on [MyGet](https://www.myget.org/F/silvenga/api/v2).
+
+> TODO: Create Nuget.org packages.
+```
+Install-Package Hangfire.Pipelines
+```
+
+## Usage
+
+> TODO
+
 ## TODO
 
 - [X] Pipeline definitions
@@ -10,6 +23,7 @@
 - [ ] Reap old data
 - [ ] Unit testing
 - [ ] Programmatic API
-- [ ] Get tasks created
+- [ ] Get pipelines created
+- [ ] Merge memory and HF api's
 - [ ] Redis storage
 - [ ] Discovery: Save pipeline storage on setup
