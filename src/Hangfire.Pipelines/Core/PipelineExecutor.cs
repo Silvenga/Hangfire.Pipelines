@@ -10,12 +10,12 @@ namespace Hangfire.Pipelines.Core
 {
     public class PipelineExecutor<TEntity>
     {
-        private readonly IReadOnlyList<ExpressionContainer> _steps;
+        private readonly IReadOnlyList<IExpressionContainer> _steps;
         private readonly IPipelineStorage _pipelineStorage;
 
-        public PipelineExecutor(IList<ExpressionContainer> steps, IPipelineStorage pipelineStorage)
+        public PipelineExecutor(IList<IExpressionContainer> steps, IPipelineStorage pipelineStorage)
         {
-            _steps = new ReadOnlyCollection<ExpressionContainer>(steps);
+            _steps = new ReadOnlyCollection<IExpressionContainer>(steps);
             _pipelineStorage = pipelineStorage;
         }
 

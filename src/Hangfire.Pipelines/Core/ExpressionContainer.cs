@@ -4,7 +4,13 @@ using Hangfire.Pipelines.Executors;
 
 namespace Hangfire.Pipelines.Core
 {
-    public class ExpressionContainer
+    public interface IExpressionContainer
+    {
+        string StartNew(IStepExecutor executor, Guid pipelineId);
+        string StartContinuation(IStepExecutor executor, string parrentId, Guid pipelineId);
+    }
+
+    public class ExpressionContainer : IExpressionContainer
     {
         private readonly Func<IStepExecutor, Guid, string> _startNew;
         private readonly Func<IStepExecutor, Guid, string, string> _startContinuation;
