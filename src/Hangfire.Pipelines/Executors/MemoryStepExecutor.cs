@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Linq;
 using System.Linq.Expressions;
 
-using Hangfire.Pipelines.Helpers;
-using Hangfire.Pipelines.Models;
+using Hangfire.Pipelines.Core;
 using Hangfire.Pipelines.Storage;
 
 namespace Hangfire.Pipelines.Executors
@@ -21,22 +19,12 @@ namespace Hangfire.Pipelines.Executors
         {
             var activatedJob = CreateObject<T>();
             var jobType = typeof(T);
-            var pipelineTaskType = jobType.GetInterfaces().SingleOrDefault(x =>
-                                               x.IsGenericType &&
-                                               x.GetGenericTypeDefinition() == typeof(IPipelineTask<>));
 
-            if (pipelineTaskType == null)
-            {
-                throw new NotSupportedException($"Setup must implement {nameof(IPipelineTask<object>)}");
-            }
-
-            var pipelineContext = ContextHelper.CreateContext(pipelineTaskType.GenericTypeArguments, _pipelineStorage, pipelineId);
-            ContextHelper.SetContext(jobType, activatedJob, pipelineContext);
-            ContextHelper.Setup(pipelineContext);
+            PipelineInterceptor.SetUpContext(jobType, activatedJob, _pipelineStorage, () => pipelineId);
 
             expression.Compile().Invoke(activatedJob);
 
-            ContextHelper.TearDown(pipelineContext);
+            PipelineInterceptor.TearDownContext(jobType, activatedJob);
 
             return Guid.NewGuid().ToString("N");
         }

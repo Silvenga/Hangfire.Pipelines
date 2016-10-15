@@ -14,7 +14,7 @@ using Xunit;
 
 namespace Hangfire.Pipelines.Tests.Core
 {
-    public class HangfireActivatorInterceptorFacts
+    public class PipelineInterceptorFacts
     {
         private static readonly Fixture Autofixture = new Fixture();
 
@@ -22,12 +22,11 @@ namespace Hangfire.Pipelines.Tests.Core
         public void After_job_has_materialized_set_pipeline_context()
         {
             var storage = Substitute.For<IPipelineStorage>();
-            var filter = new HangfireActivatorInterceptor(storage);
             var step = Autofixture.Build<MockStep>().Without(x => x.PipelineContext).Create();
             var pipelineId = Autofixture.Create<Guid>();
 
             // Act
-            filter.SetUpContext(typeof(MockStep), step, () => pipelineId);
+            PipelineInterceptor.SetUpContext(typeof(MockStep), step, storage, () => pipelineId);
 
             // Assert
             step.PipelineContext.Should().NotBeNull();

@@ -63,7 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\HangfireActivatorInterceptor.cs" />
-    <Compile Include="Helpers\ContextHelper.cs" />
+    <Compile Include="Core\PipelineInterceptor.cs" />
     <Compile Include="Executors\HangfireStepExecutor.cs" />
     <Compile Include="Executors\IStepExecutor.cs" />
     <Compile Include="Core\PipelineExecutor.cs" />

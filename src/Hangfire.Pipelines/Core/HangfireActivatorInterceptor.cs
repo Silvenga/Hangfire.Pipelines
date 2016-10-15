@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Linq;
 
 using Hangfire.ActivationExtensions.Interceptor;
-using Hangfire.Pipelines.Helpers;
-using Hangfire.Pipelines.Models;
 using Hangfire.Pipelines.Storage;
 
 using JetBrains.Annotations;
@@ -25,7 +22,7 @@ namespace Hangfire.Pipelines.Core
 
         public void OnMaterialized(Type jobType, object activatedJob, JobActivatorContext context)
         {
-            SetUpContext(jobType, activatedJob, () => context.GetJobParameter<Guid>("PipelineId"));
+            PipelineInterceptor.SetUpContext(jobType, activatedJob, _storage, () => context.GetJobParameter<Guid>("PipelineId"));
         }
 
         public void OnScopeCreating(JobActivatorContext context)
@@ -38,44 +35,11 @@ namespace Hangfire.Pipelines.Core
 
         public void OnScopeDisposing(Type jobType, object activatedJob, JobActivatorContext context)
         {
-            TearDownContext(jobType, activatedJob);
+            PipelineInterceptor.TearDownContext(jobType, activatedJob);
         }
 
         public void OnScopeDisposed(Type jobType, object activatedJob, JobActivatorContext context)
         {
-        }
-
-        public void SetUpContext(Type jobType, object activatedJob, Func<Guid> getPipelineId)
-        {
-            var pipelineTaskType = jobType.GetInterfaces().SingleOrDefault(x =>
-                                               x.IsGenericType &&
-                                               x.GetGenericTypeDefinition() == typeof(IPipelineTask<>));
-
-            if (pipelineTaskType == null)
-            {
-                return;
-            }
-
-            var id = getPipelineId();
-
-            var pipelineContext = ContextHelper.CreateContext(pipelineTaskType.GenericTypeArguments, _storage, id);
-            ContextHelper.SetContext(jobType, activatedJob, pipelineContext);
-            ContextHelper.Setup(pipelineContext);
-        }
-
-        private static void TearDownContext(Type jobType, object activatedJob)
-        {
-            var pipelineTaskType = jobType.GetInterfaces().SingleOrDefault(x =>
-                                               x.IsGenericType &&
-                                               x.GetGenericTypeDefinition() == typeof(IPipelineTask<>));
-
-            if (pipelineTaskType == null)
-            {
-                return;
-            }
-
-            var pipelineContext = ContextHelper.GetContext(jobType, activatedJob);
-            ContextHelper.TearDown(pipelineContext);
         }
     }
 }

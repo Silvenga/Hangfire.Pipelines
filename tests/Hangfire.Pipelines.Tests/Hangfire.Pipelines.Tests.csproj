@@ -91,7 +91,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\ExpressionContainerFacts.cs" />
-    <Compile Include="Core\HangfireActivatorInterceptorFacts.cs" />
+    <Compile Include="Core\PipelineInterceptorFacts.cs" />
     <Compile Include="Core\PipelineDefinitionFacts.cs" />
     <Compile Include="Core\PipelineExecutorFacts.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
