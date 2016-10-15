@@ -94,6 +94,7 @@
     <Compile Include="Core\PipelineInterceptorFacts.cs" />
     <Compile Include="Core\PipelineDefinitionFacts.cs" />
     <Compile Include="Core\PipelineExecutorFacts.cs" />
+    <Compile Include="Models\PipelineContextFacts.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -27,5 +27,5 @@ Install-Package Hangfire.Pipelines
 - [X] Merge memory and HF api's
 - [ ] Redis storage
 - [ ] Discovery: Save pipeline storage on setup
-- [ ] Remove usage of static ContextHelper
-- [ ] Merge string constants
+- [X] Remove usage of static ContextHelper
+- [X] Merge string constants
