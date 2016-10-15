@@ -24,7 +24,8 @@ Install-Package Hangfire.Pipelines
 - [ ] Unit testing
 - [ ] Programmatic API
 - [ ] Get pipelines created
-- [ ] Merge memory and HF api's
+- [X] Merge memory and HF api's
 - [ ] Redis storage
 - [ ] Discovery: Save pipeline storage on setup
-- [ ] Remove usage of static ContextHelper.
+- [ ] Remove usage of static ContextHelper
+- [ ] Merge string constants

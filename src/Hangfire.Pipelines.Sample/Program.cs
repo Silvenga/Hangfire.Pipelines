@@ -1,7 +1,9 @@
 ﻿using System;
 
+using Hangfire.MemoryStorage;
 using Hangfire.Pipelines.Core;
 using Hangfire.Pipelines.Executors;
+using Hangfire.Pipelines.Helpers;
 using Hangfire.Pipelines.Models;
 using Hangfire.Pipelines.Storage;
 
@@ -13,33 +15,21 @@ namespace Hangfire.Pipelines.Sample
         {
             var memory = new MemoryPipelineStorage();
 
-            //GlobalConfiguration.Configuration
-            //    .UseColouredConsoleLogProvider()
-            //    .UseMemoryStorage();
-            //GlobalConfiguration.Configuration
-            //    .UsePipelines(memory);
+            GlobalConfiguration.Configuration
+                .UseColouredConsoleLogProvider()
+                .UseMemoryStorage();
+            GlobalConfiguration.Configuration
+                .UsePipelines(memory);
 
-            //var server = new BackgroundJobServer();
+            // ReSharper disable once UnusedVariable
+            var server = new BackgroundJobServer();
 
-            //Console.WriteLine("Start?");
+            Console.WriteLine("Start?");
 
-            //var client = new BackgroundJobClient();
+            var client = new BackgroundJobClient();
+            IStepExecutor stepExecutor = new HangfireStepExecutor(client);
 
-            //var testPipeline = new PipelineDefinition<string>(memory);
-
-            //testPipeline.AddStep<TestStep>(x => x.Run());
-            //testPipeline.AddStep<TestStep>(x => x.Run2());
-
-            //var executor = testPipeline.CreateExecutor();
-
-            //IStepExecutor stepExecutor = new HangfireStepExecutor(client);
-            //executor.Process("test", stepExecutor);
-
-            //Console.WriteLine("Ready...");
-            //Console.ReadLine();
-
-            var memoryEx = new MemoryStepExecutor(memory);
-            var testPipeline = new PipelineDefinition<string>(memory, memoryEx);
+            var testPipeline = new PipelineDefinition<string>(memory, stepExecutor);
 
             testPipeline.AddStep<TestStep>(x => x.Run());
             testPipeline.AddStep<TestStep>(x => x.Run2());
@@ -49,6 +39,18 @@ namespace Hangfire.Pipelines.Sample
 
             Console.WriteLine("Ready...");
             Console.ReadLine();
+
+            //var memoryEx = new MemoryStepExecutor(memory);
+            //var testPipeline = new PipelineDefinition<string>(memory, memoryEx);
+
+            //testPipeline.AddStep<TestStep>(x => x.Run());
+            //testPipeline.AddStep<TestStep>(x => x.Run2());
+
+            //var executor = testPipeline.CreateExecutor();
+            //executor.Process("test");
+
+            //Console.WriteLine("Ready...");
+            //Console.ReadLine();
         }
     }
 

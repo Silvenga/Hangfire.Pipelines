@@ -6,6 +6,8 @@ using System.Linq;
 using Hangfire.Pipelines.Executors;
 using Hangfire.Pipelines.Storage;
 
+using JetBrains.Annotations;
+
 namespace Hangfire.Pipelines.Core
 {
     public class PipelineExecutor<TEntity>
@@ -21,7 +23,7 @@ namespace Hangfire.Pipelines.Core
             Executor = executor;
         }
 
-        public Guid Process(TEntity entity)
+        public Guid Process(TEntity entity, [CanBeNull] IStepExecutor executor = null)
         {
             var id = Guid.NewGuid();
 
@@ -33,7 +35,7 @@ namespace Hangfire.Pipelines.Core
             // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (var invoker in Steps.Skip(1))
             {
-                lastId = invoker.StartContinuation(Executor, id, lastId);
+                lastId = invoker.StartContinuation(executor ?? Executor, id, lastId);
             }
 
             return id;
