@@ -40,8 +40,24 @@
       <HintPath>..\..\packages\FluentAssertions.4.14.0\lib\net45\FluentAssertions.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Hangfire.ActivationExtensions, Version=1.0.21.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Hangfire.ActivationExtensions.1.0.21\lib\net45\Hangfire.ActivationExtensions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Hangfire.Core, Version=1.6.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Hangfire.Core.1.6.5\lib\net45\Hangfire.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="NSubstitute, Version=1.10.0.0, Culture=neutral, PublicKeyToken=92dd2e9066daa5ca, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NSubstitute.1.10.0.0\lib\net45\NSubstitute.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Ploeh.AutoFixture, Version=3.50.2.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
@@ -74,6 +90,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\ExpressionContainerFacts.cs" />
+    <Compile Include="Core\HangfireActivatorInterceptorFacts.cs" />
     <Compile Include="Core\PipelineDefinitionFacts.cs" />
     <Compile Include="Core\PipelineExecutorFacts.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

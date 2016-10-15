@@ -21,11 +21,11 @@ namespace Hangfire.Pipelines.Helpers
             return method.GetValue(activatedJob);
         }
 
-        public static object CreateContext(Type[] typeArgs, [NotNull] IPipelineStorage pipelineStorage, Guid pipelineId)
+        public static object CreateContext(Type[] typeArgs, [NotNull] IPipelineStorage storage, Guid pipelineId)
         {
             var type = typeof(PipelineContext<>);
             var genericType = type.MakeGenericType(typeArgs);
-            var instance = Activator.CreateInstance(genericType, pipelineStorage, pipelineId);
+            var instance = Activator.CreateInstance(genericType, storage, pipelineId);
             return instance;
         }
 
