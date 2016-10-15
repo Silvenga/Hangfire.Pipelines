@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Linq.Expressions;
 
-using Hangfire.Pipelines.Core;
 using Hangfire.Pipelines.Helpers;
 using Hangfire.Pipelines.Models;
 using Hangfire.Pipelines.Storage;

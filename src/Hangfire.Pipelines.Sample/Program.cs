@@ -9,7 +9,7 @@ namespace Hangfire.Pipelines.Sample
 {
     public class Program
     {
-        private static void Main(string[] args)
+        private static void Main()
         {
             var memory = new MemoryPipelineStorage();
 
