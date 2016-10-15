@@ -2,17 +2,16 @@
 using System.Linq.Expressions;
 
 using Hangfire.Pipelines.Core;
-using Hangfire.Pipelines.Storage;
 
 namespace Hangfire.Pipelines.Executors
 {
     public class MemoryStepExecutor : IStepExecutor
     {
-        private readonly IPipelineStorage _pipelineStorage;
+        private readonly PipelineInterceptor _interceptor;
 
-        public MemoryStepExecutor(IPipelineStorage pipelineStorage)
+        public MemoryStepExecutor(PipelineInterceptor interceptor)
         {
-            _pipelineStorage = pipelineStorage;
+            _interceptor = interceptor;
         }
 
         public string RunNew<T>(Expression<Action<T>> expression, Guid pipelineId)
@@ -20,11 +19,11 @@ namespace Hangfire.Pipelines.Executors
             var activatedJob = CreateObject<T>();
             var jobType = typeof(T);
 
-            PipelineInterceptor.SetUpContext(jobType, activatedJob, _pipelineStorage, () => pipelineId);
+            _interceptor.SetUpContext(jobType, activatedJob, () => pipelineId);
 
             expression.Compile().Invoke(activatedJob);
 
-            PipelineInterceptor.TearDownContext(jobType, activatedJob);
+            _interceptor.TearDownContext(jobType, activatedJob);
 
             return Guid.NewGuid().ToString("N");
         }

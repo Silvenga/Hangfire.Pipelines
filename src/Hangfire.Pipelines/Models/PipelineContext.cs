@@ -1,5 +1,6 @@
 ﻿using System;
 
+using Hangfire.Pipelines.Core;
 using Hangfire.Pipelines.Storage;
 
 using JetBrains.Annotations;
@@ -9,6 +10,7 @@ namespace Hangfire.Pipelines.Models
     public interface IPipelineContext
     {
         Guid PipelineId { get; }
+        IPipelineStorage Storage { get; }
 
         void Load();
         void Save();
@@ -21,28 +23,27 @@ namespace Hangfire.Pipelines.Models
 
     public class PipelineContext<T> : IPipelineContext<T>
     {
-        private const string PipelineEntityKey = "PipelineEntity";
-        private readonly IPipelineStorage _pipelineStorage;
+        public IPipelineStorage Storage { get; }
 
         [CanBeNull]
         public T Entity { get; set; }
 
         public Guid PipelineId { get; }
 
-        public PipelineContext([NotNull] IPipelineStorage pipelineStorage, Guid pipelineId)
+        public PipelineContext([NotNull] IPipelineStorage storage, Guid pipelineId)
         {
-            _pipelineStorage = pipelineStorage;
+            Storage = storage;
             PipelineId = pipelineId;
         }
 
         public void Load()
         {
-            Entity = _pipelineStorage.Get<T>(PipelineId, PipelineEntityKey);
+            Entity = Storage.Get<T>(PipelineId, Constants.PipelineEntityKey);
         }
 
         public void Save()
         {
-            _pipelineStorage.Set(PipelineId, PipelineEntityKey, Entity);
+            Storage.Set(PipelineId, Constants.PipelineEntityKey, Entity);
         }
     }
 }

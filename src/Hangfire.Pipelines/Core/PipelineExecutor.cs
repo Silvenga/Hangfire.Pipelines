@@ -27,7 +27,7 @@ namespace Hangfire.Pipelines.Core
         {
             var id = Guid.NewGuid();
 
-            Storage.Set(id, "PipelineEntity", entity);
+            Storage.Set(id, Constants.PipelineEntityKey, entity);
 
             var first = Steps.First();
             var lastId = first.StartNew(Executor, id);

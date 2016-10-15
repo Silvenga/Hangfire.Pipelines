@@ -10,7 +10,14 @@ namespace Hangfire.Pipelines.Core
 {
     public class PipelineInterceptor
     {
-        public static void SetUpContext(Type jobType, object activatedJob, IPipelineStorage storage, Func<Guid> getPipelineId)
+        private readonly IPipelineStorage _storage;
+
+        public PipelineInterceptor(IPipelineStorage storage)
+        {
+            _storage = storage;
+        }
+
+        public void SetUpContext(Type jobType, object task, Func<Guid> getPipelineId)
         {
             var pipelineTaskType = GetPipelineTaskType(jobType);
             if (pipelineTaskType == null)
@@ -20,12 +27,12 @@ namespace Hangfire.Pipelines.Core
 
             var id = getPipelineId();
 
-            var pipelineContext = CreateContext(pipelineTaskType.GenericTypeArguments, storage, id);
-            SetContext(jobType, activatedJob, pipelineContext);
-            Setup(pipelineContext);
+            var pipelineContext = CreateContext(pipelineTaskType.GenericTypeArguments, _storage, id);
+            SetContext(jobType, task, pipelineContext);
+            pipelineContext.Load();
         }
 
-        public static void TearDownContext(Type jobType, object activatedJob)
+        public void TearDownContext(Type jobType, object task)
         {
             var pipelineTaskType = GetPipelineTaskType(jobType);
             if (pipelineTaskType == null)
@@ -33,48 +40,36 @@ namespace Hangfire.Pipelines.Core
                 return;
             }
 
-            var pipelineContext = GetContext(jobType, activatedJob);
-            TearDown(pipelineContext);
+            var pipelineContext = GetContext(jobType, task);
+            pipelineContext.Save();
         }
 
         [CanBeNull]
-        private static Type GetPipelineTaskType(Type jobType)
+        private Type GetPipelineTaskType(Type jobType)
         {
             return jobType.GetInterfaces().SingleOrDefault(x =>
                                x.IsGenericType &&
                                x.GetGenericTypeDefinition() == typeof(IPipelineTask<>));
         }
 
-        private static void SetContext(Type jobType, object pipelineTask, object pipelineContext)
+        private void SetContext(Type jobType, object task, IPipelineContext pipelineContext)
         {
             var method = jobType.GetProperty(nameof(IPipelineTask<object>.PipelineContext));
-            method.SetValue(pipelineTask, pipelineContext);
+            method.SetValue(task, pipelineContext);
         }
 
-        private static object GetContext(Type jobType, object activatedJob)
+        private IPipelineContext GetContext(Type jobType, object task)
         {
             var method = jobType.GetProperty(nameof(IPipelineTask<object>.PipelineContext));
-            return method.GetValue(activatedJob);
+            return (IPipelineContext) method.GetValue(task);
         }
 
-        private static object CreateContext(Type[] typeArgs, [NotNull] IPipelineStorage storage, Guid pipelineId)
+        private IPipelineContext CreateContext(Type[] typeArgs, [NotNull] IPipelineStorage storage, Guid pipelineId)
         {
             var type = typeof(PipelineContext<>);
             var genericType = type.MakeGenericType(typeArgs);
             var instance = Activator.CreateInstance(genericType, storage, pipelineId);
-            return instance;
-        }
-
-        private static void Setup(object pipelineContext)
-        {
-            var basicContext = (IPipelineContext) pipelineContext;
-            basicContext.Load();
-        }
-
-        private static void TearDown(object pipelineContext)
-        {
-            var basicContext = (IPipelineContext) pipelineContext;
-            basicContext.Save();
+            return (IPipelineContext) instance;
         }
     }
 }

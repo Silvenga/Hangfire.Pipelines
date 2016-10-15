@@ -62,6 +62,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Constants.cs" />
     <Compile Include="Core\HangfireActivatorInterceptor.cs" />
     <Compile Include="Core\PipelineInterceptor.cs" />
     <Compile Include="Executors\HangfireStepExecutor.cs" />
