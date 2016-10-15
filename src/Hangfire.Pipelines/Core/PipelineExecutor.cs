@@ -10,28 +10,30 @@ namespace Hangfire.Pipelines.Core
 {
     public class PipelineExecutor<TEntity>
     {
-        private readonly IReadOnlyList<IExpressionContainer> _steps;
-        private readonly IPipelineStorage _pipelineStorage;
+        public IReadOnlyList<IExpressionContainer> Steps { get; }
+        public IPipelineStorage Storage { get; }
+        public IStepExecutor Executor { get; }
 
-        public PipelineExecutor(IList<IExpressionContainer> steps, IPipelineStorage pipelineStorage)
+        public PipelineExecutor(IList<IExpressionContainer> steps, IPipelineStorage storage, IStepExecutor executor)
         {
-            _steps = new ReadOnlyCollection<IExpressionContainer>(steps);
-            _pipelineStorage = pipelineStorage;
+            Steps = new ReadOnlyCollection<IExpressionContainer>(steps);
+            Storage = storage;
+            Executor = executor;
         }
 
-        public Guid Process(TEntity entity, IStepExecutor executor)
+        public Guid Process(TEntity entity)
         {
             var id = Guid.NewGuid();
 
-            _pipelineStorage.Set(id, "PipelineEntity", entity);
+            Storage.Set(id, "PipelineEntity", entity);
 
-            var first = _steps.First();
-            var lastId = first.StartNew(executor, id);
+            var first = Steps.First();
+            var lastId = first.StartNew(Executor, id);
 
             // ReSharper disable once LoopCanBeConvertedToQuery
-            foreach (var invoker in _steps.Skip(1))
+            foreach (var invoker in Steps.Skip(1))
             {
-                lastId = invoker.StartContinuation(executor, lastId, id);
+                lastId = invoker.StartContinuation(Executor, id, lastId);
             }
 
             return id;

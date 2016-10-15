@@ -25,10 +25,10 @@ namespace Hangfire.Pipelines.Tests.Core
             var storage = Substitute.For<IPipelineStorage>();
             var executor = Substitute.For<IStepExecutor>();
 
-            var pipeline = new PipelineExecutor<object>(steps, storage);
+            var pipeline = new PipelineExecutor<object>(steps, storage, executor);
 
             // Act
-            pipeline.Process(null, executor);
+            pipeline.Process(null);
 
             // Assert
             step.Received().StartNew(executor, Arg.Any<Guid>());
@@ -45,14 +45,14 @@ namespace Hangfire.Pipelines.Tests.Core
             var storage = Substitute.For<IPipelineStorage>();
             var executor = Substitute.For<IStepExecutor>();
 
-            var pipeline = new PipelineExecutor<object>(steps, storage);
+            var pipeline = new PipelineExecutor<object>(steps, storage, executor);
 
             // Act
-            pipeline.Process(null, executor);
+            pipeline.Process(null);
 
             // Assert
-            step2.Received().StartContinuation(executor, Arg.Any<string>(), Arg.Any<Guid>());
-            step3.Received().StartContinuation(executor, Arg.Any<string>(), Arg.Any<Guid>());
+            step2.Received().StartContinuation(executor, Arg.Any<Guid>(), Arg.Any<string>());
+            step3.Received().StartContinuation(executor, Arg.Any<Guid>(), Arg.Any<string>());
         }
 
         [Fact]
@@ -70,16 +70,16 @@ namespace Hangfire.Pipelines.Tests.Core
             var id2 = AutoFixture.Create<string>();
 
             step1.StartNew(executor, Arg.Any<Guid>()).Returns(id1);
-            step2.StartContinuation(executor, id1, Arg.Any<Guid>()).Returns(id2);
+            step2.StartContinuation(executor, Arg.Any<Guid>(), id1).Returns(id2);
 
-            var pipeline = new PipelineExecutor<object>(steps, storage);
+            var pipeline = new PipelineExecutor<object>(steps, storage, executor);
 
             // Act
-            pipeline.Process(null, executor);
+            pipeline.Process(null);
 
             // Assert
-            step2.Received().StartContinuation(executor, id1, Arg.Any<Guid>());
-            step3.Received().StartContinuation(executor, id2, Arg.Any<Guid>());
+            step2.Received().StartContinuation(executor, Arg.Any<Guid>(), id1);
+            step3.Received().StartContinuation(executor, Arg.Any<Guid>(), id2);
         }
 
         [Fact]
@@ -93,15 +93,15 @@ namespace Hangfire.Pipelines.Tests.Core
             var storage = Substitute.For<IPipelineStorage>();
             var executor = Substitute.For<IStepExecutor>();
 
-            var pipeline = new PipelineExecutor<object>(steps, storage);
+            var pipeline = new PipelineExecutor<object>(steps, storage, executor);
 
             // Act
-            var pipelineId = pipeline.Process(null, executor);
+            var pipelineId = pipeline.Process(null);
 
             // Assert
             step1.Received().StartNew(executor, Arg.Is(pipelineId));
-            step2.Received().StartContinuation(executor, Arg.Any<string>(), Arg.Is(pipelineId));
-            step3.Received().StartContinuation(executor, Arg.Any<string>(), Arg.Is(pipelineId));
+            step2.Received().StartContinuation(executor, Arg.Is(pipelineId), Arg.Any<string>());
+            step3.Received().StartContinuation(executor, Arg.Is(pipelineId), Arg.Any<string>());
         }
 
         [Fact]
@@ -111,11 +111,11 @@ namespace Hangfire.Pipelines.Tests.Core
             var steps = new List<IExpressionContainer> {step};
             var storage = Substitute.For<IPipelineStorage>();
 
-            var pipeline = new PipelineExecutor<object>(steps, storage);
+            var pipeline = new PipelineExecutor<object>(steps, storage, null);
             var obj = AutoFixture.Create<object>();
 
             // Act
-            var pipelineId = pipeline.Process(obj, null);
+            var pipelineId = pipeline.Process(obj);
 
             // Assert
             storage.Received().Set(pipelineId, "PipelineEntity", obj);

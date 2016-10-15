@@ -38,14 +38,14 @@ namespace Hangfire.Pipelines.Sample
             //Console.WriteLine("Ready...");
             //Console.ReadLine();
 
-            var testPipeline = new PipelineDefinition<string>(memory);
             var memoryEx = new MemoryStepExecutor(memory);
+            var testPipeline = new PipelineDefinition<string>(memory, memoryEx);
 
             testPipeline.AddStep<TestStep>(x => x.Run());
             testPipeline.AddStep<TestStep>(x => x.Run2());
 
             var executor = testPipeline.CreateExecutor();
-            executor.Process("test", memoryEx);
+            executor.Process("test");
 
             Console.WriteLine("Ready...");
             Console.ReadLine();

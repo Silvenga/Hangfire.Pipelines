@@ -74,6 +74,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\PipelineDefinitionFacts.cs" />
     <Compile Include="Core\PipelineExecutorFacts.cs" />
     <Compile Include="PipelineTemplateFacts.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

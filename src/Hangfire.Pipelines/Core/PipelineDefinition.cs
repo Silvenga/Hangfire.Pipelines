@@ -2,19 +2,25 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
+using Hangfire.Pipelines.Executors;
 using Hangfire.Pipelines.Models;
 using Hangfire.Pipelines.Storage;
+
+using JetBrains.Annotations;
 
 namespace Hangfire.Pipelines.Core
 {
     public class PipelineDefinition<TEntity>
     {
-        private readonly IPipelineStorage _pipelineStorage;
-        private readonly IList<IExpressionContainer> _steps = new List<IExpressionContainer>();
+        public IPipelineStorage Storage { get; }
+        public IList<IExpressionContainer> Steps { get; }
+        public IStepExecutor Executor { get; }
 
-        public PipelineDefinition(IPipelineStorage pipelineStorage)
+        public PipelineDefinition(IPipelineStorage storage, IStepExecutor executor, [CanBeNull, ItemNotNull] IList<IExpressionContainer> steps = null)
         {
-            _pipelineStorage = pipelineStorage;
+            Storage = storage;
+            Executor = executor;
+            Steps = steps ?? new List<IExpressionContainer>();
         }
 
         public void AddStep<T>(Expression<Action<T>> expression) where T : IPipelineTask<TEntity>
@@ -23,12 +29,12 @@ namespace Hangfire.Pipelines.Core
                 (executor, pipelineId) => executor.RunNew(expression, pipelineId),
                 (executor, pipelineId, parrentId) => executor.RunContinuation(expression, pipelineId, parrentId)
             );
-            _steps.Add(container);
+            Steps.Add(container);
         }
 
         public PipelineExecutor<TEntity> CreateExecutor()
         {
-            return new PipelineExecutor<TEntity>(_steps, _pipelineStorage);
+            return new PipelineExecutor<TEntity>(Steps, Storage, Executor);
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Hangfire.Pipelines.Core
     public interface IExpressionContainer
     {
         string StartNew(IStepExecutor executor, Guid pipelineId);
-        string StartContinuation(IStepExecutor executor, string parrentId, Guid pipelineId);
+        string StartContinuation(IStepExecutor executor, Guid pipelineId, string parrentId);
     }
 
     public class ExpressionContainer : IExpressionContainer
@@ -26,7 +26,7 @@ namespace Hangfire.Pipelines.Core
             return _startNew.Invoke(executor, pipelineId);
         }
 
-        public string StartContinuation(IStepExecutor executor, string parrentId, Guid pipelineId)
+        public string StartContinuation(IStepExecutor executor, Guid pipelineId, string parrentId)
         {
             return _startContinuation.Invoke(executor, pipelineId, parrentId);
         }
