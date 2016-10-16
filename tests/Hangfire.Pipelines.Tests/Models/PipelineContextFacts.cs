@@ -37,7 +37,6 @@ namespace Hangfire.Pipelines.Tests.Models
         [Fact]
         public void On_Load_load_from_storage()
         {
-            var entity = Autofixture.Create<string>();
             IPipelineContext<string> context = new PipelineContext<string>(_storage, _pipelineId);
 
             // Act

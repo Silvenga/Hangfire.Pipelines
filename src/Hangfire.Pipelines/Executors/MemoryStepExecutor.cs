@@ -16,6 +16,16 @@ namespace Hangfire.Pipelines.Executors
 
         public string RunNew<T>(Expression<Action<T>> expression, Guid pipelineId)
         {
+            return RunInMemory(expression, pipelineId);
+        }
+
+        public string RunContinuation<T>(Expression<Action<T>> expression, Guid pipelineId, string parrentId)
+        {
+            return RunInMemory(expression, pipelineId);
+        }
+
+        protected virtual string RunInMemory<T>(Expression<Action<T>> expression, Guid pipelineId)
+        {
             var activatedJob = CreateObject<T>();
             var jobType = typeof(T);
 
@@ -28,12 +38,7 @@ namespace Hangfire.Pipelines.Executors
             return Guid.NewGuid().ToString("N");
         }
 
-        public string RunContinuation<T>(Expression<Action<T>> expression, Guid pipelineId, string parrentId)
-        {
-            return RunNew(expression, pipelineId);
-        }
-
-        private T CreateObject<T>()
+        protected virtual T CreateObject<T>()
         {
             return (T) Activator.CreateInstance(typeof(T));
         }
