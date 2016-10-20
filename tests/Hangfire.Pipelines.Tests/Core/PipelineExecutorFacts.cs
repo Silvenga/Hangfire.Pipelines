@@ -110,8 +110,9 @@ namespace Hangfire.Pipelines.Tests.Core
             var step = Substitute.For<IExpressionContainer>();
             var steps = new List<IExpressionContainer> {step};
             var storage = Substitute.For<IPipelineStorage>();
+            var executor = Substitute.For<IStepExecutor>();
 
-            var pipeline = new PipelineExecutor<object>(steps, storage, null);
+            var pipeline = new PipelineExecutor<object>(steps, storage, executor);
             var obj = AutoFixture.Create<object>();
 
             // Act

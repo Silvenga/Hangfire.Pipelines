@@ -15,6 +15,10 @@ namespace Hangfire.Pipelines.Executors
             _client = client;
         }
 
+        public void StartedRun(Guid pipelineId)
+        {
+        }
+
         public string RunNew<T>(Expression<Action<T>> expression, Guid pipelineId)
         {
             return _client.AddOrUpdateMeta(Constants.PipelineIdKey, pipelineId).Enqueue(expression);
@@ -23,6 +27,10 @@ namespace Hangfire.Pipelines.Executors
         public string RunContinuation<T>(Expression<Action<T>> expression, Guid pipelineId, string parrentId)
         {
             return _client.AddOrUpdateMeta(Constants.PipelineIdKey, pipelineId).ContinueWith(parrentId, expression);
+        }
+
+        public void CompletedRun(Guid pipelineId)
+        {
         }
     }
 }

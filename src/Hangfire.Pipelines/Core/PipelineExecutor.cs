@@ -26,17 +26,20 @@ namespace Hangfire.Pipelines.Core
         public Guid Process(TEntity entity, [CanBeNull] IStepExecutor executor = null)
         {
             var id = Guid.NewGuid();
+            var localExecutor = executor ?? Executor;
+            localExecutor.StartedRun(id);
 
             Storage.Set(id, Constants.PipelineEntityKey, entity);
 
             var first = Steps.First();
-            var lastId = first.StartNew(Executor, id);
+            var lastId = first.StartNew(localExecutor, id);
 
             // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (var invoker in Steps.Skip(1))
             {
-                lastId = invoker.StartContinuation(executor ?? Executor, id, lastId);
+                lastId = invoker.StartContinuation(localExecutor, id, lastId);
             }
+            localExecutor.CompletedRun(id);
 
             return id;
         }

@@ -14,6 +14,10 @@ namespace Hangfire.Pipelines.Executors
             _interceptor = interceptor;
         }
 
+        public void StartedRun(Guid pipelineId)
+        {
+        }
+
         public string RunNew<T>(Expression<Action<T>> expression, Guid pipelineId)
         {
             return RunInMemory(expression, pipelineId);
@@ -22,6 +26,10 @@ namespace Hangfire.Pipelines.Executors
         public string RunContinuation<T>(Expression<Action<T>> expression, Guid pipelineId, string parrentId)
         {
             return RunInMemory(expression, pipelineId);
+        }
+
+        public void CompletedRun(Guid pipelineId)
+        {
         }
 
         protected virtual string RunInMemory<T>(Expression<Action<T>> expression, Guid pipelineId)
