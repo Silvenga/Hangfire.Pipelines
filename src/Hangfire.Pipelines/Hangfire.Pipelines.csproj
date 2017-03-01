@@ -63,7 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Constants.cs" />
-    <Compile Include="Interceptors\HangfireActivatorInterceptor.cs" />
+    <Compile Include="Core\HangfireActivatorInterceptor.cs" />
     <Compile Include="Core\PipelineInterceptor.cs" />
     <Compile Include="Executors\HangfireStepExecutor.cs" />
     <Compile Include="Executors\IStepExecutor.cs" />
@@ -71,8 +71,6 @@
     <Compile Include="Executors\MemoryStepExecutor.cs" />
     <Compile Include="Core\ExpressionContainer.cs" />
     <Compile Include="Helpers\GlobalConfigurationExtensions.cs" />
-    <Compile Include="Interceptors\HangfireWithStorageActivatorInterceptor.cs" />
-    <Compile Include="Storage\HangfirePipelineStorage.cs" />
     <Compile Include="Storage\IPipelineStorage.cs" />
     <Compile Include="Models\PipelineContext.cs" />
     <Compile Include="Models\IPipelineTask.cs" />
