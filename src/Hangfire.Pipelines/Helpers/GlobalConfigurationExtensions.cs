@@ -1,6 +1,7 @@
 ﻿using Hangfire.ActivationExtensions;
 using Hangfire.MetaExtensions;
 using Hangfire.Pipelines.Core;
+using Hangfire.Pipelines.Interceptors;
 using Hangfire.Pipelines.Storage;
 
 using JetBrains.Annotations;
@@ -18,6 +19,15 @@ namespace Hangfire.Pipelines.Helpers
         public static IGlobalConfiguration UsePipelines([NotNull] this IGlobalConfiguration configuration, [NotNull] IPipelineStorage pipelineStorage)
         {
             var activationFilter = new HangfireActivatorInterceptor(new PipelineInterceptor(), pipelineStorage);
+            configuration.UseDefaultActivatorInterceptor(activationFilter);
+            configuration.UseMetaExtensions();
+
+            return configuration;
+        }
+
+        public static IGlobalConfiguration UsePipelines([NotNull] this IGlobalConfiguration configuration)
+        {
+            var activationFilter = new HangfireWithStorageActivatorInterceptor(new PipelineInterceptor());
             configuration.UseDefaultActivatorInterceptor(activationFilter);
             configuration.UseMetaExtensions();
 

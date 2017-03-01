@@ -1,9 +1,10 @@
 ﻿using System;
 
 using Hangfire.ActivationExtensions.Interceptor;
+using Hangfire.Pipelines.Core;
 using Hangfire.Pipelines.Storage;
 
-namespace Hangfire.Pipelines.Core
+namespace Hangfire.Pipelines.Interceptors
 {
     public class HangfireActivatorInterceptor : IJobActivatorFilter
     {
