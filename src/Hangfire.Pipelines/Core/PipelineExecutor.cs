@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 using System.Linq;
-
-using Hangfire.Pipelines.Executors;
-using Hangfire.Pipelines.Storage;
 
 using JetBrains.Annotations;
 
@@ -12,24 +9,37 @@ namespace Hangfire.Pipelines.Core
 {
     public class PipelineExecutor<TEntity>
     {
-        public IReadOnlyList<IExpressionContainer> Steps { get; }
-        public IPipelineStorage Storage { get; }
-        public IStepExecutor Executor { get; }
+        public ImmutableArray<IExpressionContainer> Steps { get; }
+        public CreatePipelineStorage StorageDelegate { get; }
+        public CreateStepExecutor ExecutorDelegate { get; }
 
-        public PipelineExecutor(IList<IExpressionContainer> steps, IPipelineStorage storage, IStepExecutor executor)
+        public PipelineExecutor([NotNull] IEnumerable<IExpressionContainer> steps, [NotNull] CreatePipelineStorage storageDelegate,
+                                [NotNull] CreateStepExecutor executorDelegate)
         {
-            Steps = new ReadOnlyCollection<IExpressionContainer>(steps);
-            Storage = storage;
-            Executor = executor;
+            Steps = steps.ToImmutableArray();
+            StorageDelegate = storageDelegate;
+            ExecutorDelegate = executorDelegate;
+
+            if (!Steps.Any())
+            {
+                throw new NotSupportedException($"A {nameof(PipelineExecutor<TEntity>)} must have steps to be constructed.");
+            }
         }
 
-        public Guid Process(TEntity entity, [CanBeNull] IStepExecutor executor = null)
+        public Guid Process([NotNull] TEntity entity, [CanBeNull] CreateStepExecutor executor = null)
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             var id = Guid.NewGuid();
-            var localExecutor = executor ?? Executor;
+            var localExecutor = (executor ?? ExecutorDelegate).Invoke(id);
+            var localStorage = StorageDelegate.Invoke(id);
+
             localExecutor.StartedRun(id);
 
-            Storage.Set(id, Constants.PipelineEntityKey, entity);
+            localStorage.Set(id, Constants.PipelineEntityKey, entity);
 
             var first = Steps.First();
             var lastId = first.StartNew(localExecutor, id);

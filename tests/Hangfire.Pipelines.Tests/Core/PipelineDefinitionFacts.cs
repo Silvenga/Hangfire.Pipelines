@@ -24,21 +24,46 @@ namespace Hangfire.Pipelines.Tests.Core
         [Fact]
         public void Ctor_sets_properties()
         {
-            var storage = Substitute.For<IPipelineStorage>();
-            var executor = Substitute.For<IStepExecutor>();
-            var steps = new List<IExpressionContainer>();
+            var storage = Substitute.For<CreatePipelineStorage>();
+            var executor = Substitute.For<CreateStepExecutor>();
 
             // Act
-            var definition = new PipelineDefinition<object>(storage, executor, steps);
+            var definition = new PipelineDefinition<object>(storage, executor);
 
             // Assert
-            definition.Storage.Should().Be(storage);
-            definition.Executor.Should().Be(executor);
-            definition.Steps.Should().BeSameAs(steps);
+            definition.StorageDelegate.Should().Be(storage);
+            definition.ExecutorDelegate.Should().Be(executor);
         }
 
         [Fact]
-        public void AddStep_creates_expression_container()
+        public void AddStep_creates_expression_container_with_step_name()
+        {
+            var storage = Substitute.For<IPipelineStorage>();
+            var executor = Substitute.For<IStepExecutor>();
+            var steps = new List<IExpressionContainer>();
+            var stepName = Autofixture.Create<string>();
+
+            var definition = new PipelineDefinition<object>(storage, executor, steps);
+
+            // Act
+            var expression = Autofixture.Create<Expression<Action<PipelineTask>>>();
+            definition.AddStep(expression, stepName);
+
+            // Assert
+            var subject = steps.Should().ContainSingle().Subject;
+
+            var pipelineId = Autofixture.Create<Guid>();
+
+            subject.StartNew(executor, pipelineId);
+            executor.Received().RunNew(expression, pipelineId, stepName);
+
+            var parrentId = Autofixture.Create<string>();
+            subject.StartContinuation(executor, pipelineId, parrentId);
+            executor.Received().RunContinuation(expression, pipelineId, parrentId, stepName);
+        }
+
+        [Fact]
+        public void AddStep_creates_expression_container_with_default_step_name()
         {
             var storage = Substitute.For<IPipelineStorage>();
             var executor = Substitute.For<IStepExecutor>();
@@ -54,17 +79,22 @@ namespace Hangfire.Pipelines.Tests.Core
             var subject = steps.Should().ContainSingle().Subject;
 
             var pipelineId = Autofixture.Create<Guid>();
+
+            const string defaultName = "Step 0";
+
             subject.StartNew(executor, pipelineId);
-            executor.Received().RunNew(expression, pipelineId);
+            executor.Received().RunNew(expression, pipelineId, defaultName);
 
             var parrentId = Autofixture.Create<string>();
             subject.StartContinuation(executor, pipelineId, parrentId);
-            executor.Received().RunContinuation(expression, pipelineId, parrentId);
+            executor.Received().RunContinuation(expression, pipelineId, parrentId, defaultName);
         }
 
         [Fact]
         public void CreateExecutor_should_create_a_PipelineExecutor()
         {
+            var pipelineId = Autofixture.Create<Guid>();
+
             var storage = Substitute.For<IPipelineStorage>();
             var executor = Substitute.For<IStepExecutor>();
             var steps = new List<IExpressionContainer>
@@ -79,8 +109,8 @@ namespace Hangfire.Pipelines.Tests.Core
             var result = definition.CreateExecutor();
 
             // Assert
-            result.Storage.Should().Be(storage);
-            result.Executor.Should().Be(executor);
+            definition.StorageDelegate.Invoke(pipelineId).Should().Be(storage);
+            definition.ExecutorDelegate.Invoke(pipelineId).Should().Be(executor);
             result.Steps.Should().BeEquivalentTo(steps);
         }
     }

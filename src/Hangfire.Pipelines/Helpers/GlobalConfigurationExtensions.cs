@@ -17,7 +17,7 @@ namespace Hangfire.Pipelines.Helpers
         /// <returns></returns>
         public static IGlobalConfiguration UsePipelines([NotNull] this IGlobalConfiguration configuration, [NotNull] IPipelineStorage pipelineStorage)
         {
-            var activationFilter = new HangfireActivatorInterceptor(new PipelineInterceptor(pipelineStorage));
+            var activationFilter = new HangfireActivatorInterceptor(new PipelineInterceptor(), pipelineStorage);
             configuration.UseDefaultActivatorInterceptor(activationFilter);
             configuration.UseMetaExtensions();
 

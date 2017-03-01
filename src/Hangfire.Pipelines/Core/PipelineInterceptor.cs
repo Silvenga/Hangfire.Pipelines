@@ -10,14 +10,14 @@ namespace Hangfire.Pipelines.Core
 {
     public class PipelineInterceptor
     {
-        private readonly IPipelineStorage _storage;
-
-        public PipelineInterceptor(IPipelineStorage storage)
-        {
-            _storage = storage;
-        }
-
-        public void SetUpContext(Type jobType, object task, Func<Guid> getPipelineId)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="jobType"></param>
+        /// <param name="task"></param>
+        /// <param name="getPipelineId">Lazy invocation to get the current pipelineId, this will execute on the current thread.</param>
+        /// <param name="storage"></param>
+        public void SetUpContext(Type jobType, object task, Func<Guid> getPipelineId, IPipelineStorage storage)
         {
             var pipelineTaskType = GetPipelineTaskType(jobType);
             if (pipelineTaskType == null)
@@ -27,7 +27,7 @@ namespace Hangfire.Pipelines.Core
 
             var id = getPipelineId();
 
-            var pipelineContext = CreateContext(pipelineTaskType.GenericTypeArguments, _storage, id);
+            var pipelineContext = CreateContext(pipelineTaskType.GenericTypeArguments, storage, id);
             SetContext(jobType, task, pipelineContext);
             pipelineContext.Load();
         }
@@ -48,8 +48,8 @@ namespace Hangfire.Pipelines.Core
         private Type GetPipelineTaskType(Type jobType)
         {
             return jobType.GetInterfaces().SingleOrDefault(x =>
-                               x.IsGenericType &&
-                               x.GetGenericTypeDefinition() == typeof(IPipelineTask<>));
+                x.IsGenericType &&
+                x.GetGenericTypeDefinition() == typeof(IPipelineTask<>));
         }
 
         private void SetContext(Type jobType, object task, IPipelineContext pipelineContext)

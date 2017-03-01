@@ -19,14 +19,20 @@ namespace Hangfire.Pipelines.Executors
         {
         }
 
-        public string RunNew<T>(Expression<Action<T>> expression, Guid pipelineId)
+        public string RunNew<T>(Expression<Action<T>> expression, Guid pipelineId, string stepName)
         {
-            return _client.AddOrUpdateMeta(Constants.PipelineIdKey, pipelineId).Enqueue(expression);
+            return _client
+                .AddOrUpdateMeta(Constants.PipelineIdKey, pipelineId)
+                .AddOrUpdateMeta(Constants.StepName, stepName)
+                .Enqueue(expression);
         }
 
-        public string RunContinuation<T>(Expression<Action<T>> expression, Guid pipelineId, string parrentId)
+        public string RunContinuation<T>(Expression<Action<T>> expression, Guid pipelineId, string parrentId, string stepName)
         {
-            return _client.AddOrUpdateMeta(Constants.PipelineIdKey, pipelineId).ContinueWith(parrentId, expression);
+            return _client
+                .AddOrUpdateMeta(Constants.PipelineIdKey, pipelineId)
+                .AddOrUpdateMeta(Constants.StepName, stepName)
+                .ContinueWith(parrentId, expression);
         }
 
         public void CompletedRun(Guid pipelineId)

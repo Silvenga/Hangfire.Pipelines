@@ -16,10 +16,10 @@ namespace Hangfire.Pipelines.Sample
             var memory = new MemoryPipelineStorage();
 
             GlobalConfiguration.Configuration
-                .UseColouredConsoleLogProvider()
-                .UseMemoryStorage();
+                               .UseColouredConsoleLogProvider()
+                               .UseMemoryStorage();
             GlobalConfiguration.Configuration
-                .UsePipelines(memory);
+                               .UsePipelines(memory);
 
             // ReSharper disable once UnusedVariable
             var server = new BackgroundJobServer();
@@ -29,7 +29,7 @@ namespace Hangfire.Pipelines.Sample
             var client = new BackgroundJobClient();
             IStepExecutor stepExecutor = new HangfireStepExecutor(client);
 
-            var testPipeline = new PipelineDefinition<string>(memory, stepExecutor);
+            var testPipeline = new PipelineDefinition<string>(id => memory, id => stepExecutor);
 
             testPipeline.AddStep<TestStep>(x => x.Run());
             testPipeline.AddStep<TestStep>(x => x.Run2());

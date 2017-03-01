@@ -1,16 +1,19 @@
 ﻿using System;
 
 using Hangfire.ActivationExtensions.Interceptor;
+using Hangfire.Pipelines.Storage;
 
 namespace Hangfire.Pipelines.Core
 {
     public class HangfireActivatorInterceptor : IJobActivatorFilter
     {
         private readonly PipelineInterceptor _interceptor;
+        private readonly IPipelineStorage _storage;
 
-        public HangfireActivatorInterceptor(PipelineInterceptor interceptor)
+        public HangfireActivatorInterceptor(PipelineInterceptor interceptor, IPipelineStorage storage)
         {
             _interceptor = interceptor;
+            _storage = storage;
         }
 
         public void OnMaterializing(Type jobType, JobActivatorContext context)
@@ -19,7 +22,7 @@ namespace Hangfire.Pipelines.Core
 
         public void OnMaterialized(Type jobType, object activatedJob, JobActivatorContext context)
         {
-            _interceptor.SetUpContext(jobType, activatedJob, () => context.GetJobParameter<Guid>(Constants.PipelineIdKey));
+            _interceptor.SetUpContext(jobType, activatedJob, () => context.GetJobParameter<Guid>(Constants.PipelineIdKey), _storage);
         }
 
         public void OnScopeCreating(JobActivatorContext context)
