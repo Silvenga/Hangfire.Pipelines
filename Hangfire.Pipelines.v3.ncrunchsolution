@@ -1,0 +1,10 @@
+﻿<SolutionConfiguration>
+  <Settings>
+    <AllowParallelTestExecution>True</AllowParallelTestExecution>
+    <MetricsExclusionList>
+      <Value>Helpers\JetBrainsAnnotations.cs:src\Hangfire.Pipelines\Hangfire.Pipelines.csproj</Value>
+      <Value>tests\Hangfire.Pipelines.Tests\Hangfire.Pipelines.Tests.csproj</Value>
+    </MetricsExclusionList>
+    <SolutionConfigured>True</SolutionConfigured>
+  </Settings>
+</SolutionConfiguration>
