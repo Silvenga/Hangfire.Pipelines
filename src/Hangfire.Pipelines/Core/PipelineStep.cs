@@ -27,26 +27,33 @@ namespace Hangfire.Pipelines.Core
             return new PipelineStep<TStart, TNext>(_definition);
         }
 
-        private void Add<T, TReturn>(Expression<Func<T, TReturn>> expression, string name)
+        private void Add<T, TReturn>(Expression<Func<T, TReturn>> expression, string name) where T : IPipelineTask<TInput>
         {
             var nextIndex = _definition.Steps.Count;
             name = name ?? $"Step {nextIndex}";
             var container = new ExpressionContainer(
+                $"{name} ({expression})",
                 (executor, pipelineId) => executor.RunNew(expression, pipelineId, name),
                 (executor, pipelineId, parrentId) => executor.RunContinuation(expression, pipelineId, parrentId, name)
             );
             _definition.Steps.Add(container);
         }
 
-        private void Add<T, TReturn>(Expression<Func<T, Task<TReturn>>> expression, string name)
+        private void Add<T, TReturn>(Expression<Func<T, Task<TReturn>>> expression, string name) where T : IPipelineTask<TInput>
         {
             var nextIndex = _definition.Steps.Count;
             name = name ?? $"Step {nextIndex}";
             var container = new ExpressionContainer(
+                $"{name} ({expression})",
                 (executor, pipelineId) => executor.RunNew(expression, pipelineId, name),
                 (executor, pipelineId, parrentId) => executor.RunContinuation(expression, pipelineId, parrentId, name)
             );
             _definition.Steps.Add(container);
+        }
+
+        public PipelineExecutor<TStart> CreateExecutor()
+        {
+            return new PipelineExecutor<TStart>(_definition.Name, _definition.Steps, _definition.StorageDelegate, _definition.ExecutorDelegate);
         }
     }
 }

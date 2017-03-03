@@ -18,11 +18,12 @@ namespace Hangfire.Pipelines.Tests.Core
         [Fact]
         public void StartNew_should_execute_startNew_function()
         {
+            var expression = Autofixture.Create<string>();
             var recorder = Substitute.For<IRecorderFixture>();
             var executor = Substitute.For<IStepExecutor>();
             var pipelineId = Autofixture.Create<Guid>();
 
-            IExpressionContainer container = new ExpressionContainer(recorder.StartNew, recorder.StartContinuation);
+            IExpressionContainer container = new ExpressionContainer(expression, recorder.StartNew, recorder.StartContinuation);
 
             // Act
             container.StartNew(executor, pipelineId);
@@ -34,12 +35,13 @@ namespace Hangfire.Pipelines.Tests.Core
         [Fact]
         public void StartContinuation_should_execute_startContinuation_function()
         {
+            var expression = Autofixture.Create<string>();
             var recorder = Substitute.For<IRecorderFixture>();
             var executor = Substitute.For<IStepExecutor>();
             var pipelineId = Autofixture.Create<Guid>();
             var parrentId = Autofixture.Create<string>();
 
-            IExpressionContainer container = new ExpressionContainer(recorder.StartNew, recorder.StartContinuation);
+            IExpressionContainer container = new ExpressionContainer(expression, recorder.StartNew, recorder.StartContinuation);
 
             // Act
             container.StartContinuation(executor, pipelineId, parrentId);

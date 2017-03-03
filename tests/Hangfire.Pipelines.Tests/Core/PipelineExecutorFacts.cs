@@ -20,12 +20,13 @@ namespace Hangfire.Pipelines.Tests.Core
         [Fact]
         public void First_step_processed_should_be_invoked_via_StartNew()
         {
+            var name = AutoFixture.Create<string>();
             var step = Substitute.For<IExpressionContainer>();
             var steps = new List<IExpressionContainer> {step};
             var storage = Substitute.For<IPipelineStorage>();
             var executor = Substitute.For<IStepExecutor>();
 
-            var pipeline = new PipelineExecutor<object>(steps, id => storage, id => executor);
+            var pipeline = new PipelineExecutor<object>(name, steps, id => storage, id => executor);
 
             // Act
             pipeline.Process(new object());
@@ -42,10 +43,11 @@ namespace Hangfire.Pipelines.Tests.Core
             var step3 = Substitute.For<IExpressionContainer>();
             var steps = new List<IExpressionContainer> {step1, step2, step3};
 
+            var name = AutoFixture.Create<string>();
             var storage = Substitute.For<IPipelineStorage>();
             var executor = Substitute.For<IStepExecutor>();
 
-            var pipeline = new PipelineExecutor<object>(steps, id => storage, id => executor);
+            var pipeline = new PipelineExecutor<object>(name, steps, id => storage, id => executor);
 
             // Act
             pipeline.Process(new object());
@@ -63,6 +65,7 @@ namespace Hangfire.Pipelines.Tests.Core
             var step3 = Substitute.For<IExpressionContainer>();
             var steps = new List<IExpressionContainer> {step1, step2, step3};
 
+            var name = AutoFixture.Create<string>();
             var storage = Substitute.For<IPipelineStorage>();
             var executor = Substitute.For<IStepExecutor>();
 
@@ -72,7 +75,7 @@ namespace Hangfire.Pipelines.Tests.Core
             step1.StartNew(executor, Arg.Any<Guid>()).Returns(id1);
             step2.StartContinuation(executor, Arg.Any<Guid>(), id1).Returns(id2);
 
-            var pipeline = new PipelineExecutor<object>(steps, id => storage, id => executor);
+            var pipeline = new PipelineExecutor<object>(name, steps, id => storage, id => executor);
 
             // Act
             pipeline.Process(new object());
@@ -90,10 +93,11 @@ namespace Hangfire.Pipelines.Tests.Core
             var step3 = Substitute.For<IExpressionContainer>();
             var steps = new List<IExpressionContainer> {step1, step2, step3};
 
+            var name = AutoFixture.Create<string>();
             var storage = Substitute.For<IPipelineStorage>();
             var executor = Substitute.For<IStepExecutor>();
 
-            var pipeline = new PipelineExecutor<object>(steps, id => storage, id => executor);
+            var pipeline = new PipelineExecutor<object>(name, steps, id => storage, id => executor);
 
             // Act
             var pipelineId = pipeline.Process(new object());
@@ -107,12 +111,13 @@ namespace Hangfire.Pipelines.Tests.Core
         [Fact]
         public void Before_steps_are_processed_entity_should_be_stored()
         {
+            var name = AutoFixture.Create<string>();
             var step = Substitute.For<IExpressionContainer>();
             var steps = new List<IExpressionContainer> {step};
             var storage = Substitute.For<IPipelineStorage>();
             var executor = Substitute.For<IStepExecutor>();
 
-            var pipeline = new PipelineExecutor<object>(steps, id => storage, id => executor);
+            var pipeline = new PipelineExecutor<object>(name, steps, id => storage, id => executor);
             var obj = AutoFixture.Create<object>();
 
             // Act

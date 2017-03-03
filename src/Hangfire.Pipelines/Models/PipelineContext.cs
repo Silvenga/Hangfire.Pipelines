@@ -12,15 +12,17 @@ namespace Hangfire.Pipelines.Models
         Guid PipelineId { get; }
         IPipelineStorage Storage { get; }
 
+        [UsedImplicitly]
         object InternalEntity { get; }
 
         void Load();
-        //void Save();
     }
 
-    public interface IPipelineContext<T> : IPipelineContext
+    public interface IPipelineContext<out T> : IPipelineContext
     {
         T Entity { get; }
+        void Set<TValue>(string key, TValue value);
+        TValue Get<TValue>(string key);
     }
 
     public class PipelineContext<T> : IPipelineContext<T>
@@ -28,7 +30,7 @@ namespace Hangfire.Pipelines.Models
         public IPipelineStorage Storage { get; }
 
         [CanBeNull]
-        public T Entity { get; set; }
+        public T Entity { get; private set; }
 
         public object InternalEntity => Entity;
 
@@ -45,9 +47,14 @@ namespace Hangfire.Pipelines.Models
             Entity = Storage.Get<T>(PipelineId, Constants.PipelineEntityKey);
         }
 
-        //public void Save()
-        //{
-        //    Storage.Set(PipelineId, Constants.PipelineEntityKey, Entity);
-        //}
+        public void Set<TValue>(string key, TValue value)
+        {
+            Storage.Set(PipelineId, key, value);
+        }
+
+        public TValue Get<TValue>(string key)
+        {
+            return Storage.Get<TValue>(PipelineId, key);
+        }
     }
 }

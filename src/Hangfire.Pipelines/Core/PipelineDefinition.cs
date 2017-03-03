@@ -18,6 +18,8 @@ namespace Hangfire.Pipelines.Core
 
         internal IList<IExpressionContainer> Steps { get; }
 
+        public string Name { get; private set; }
+
         internal PipelineDefinition(IPipelineStorage storage, IStepExecutor executor, [ItemNotNull] IList<IExpressionContainer> steps)
         {
             StorageDelegate = guid => storage;
@@ -32,21 +34,29 @@ namespace Hangfire.Pipelines.Core
             Steps = new List<IExpressionContainer>();
         }
 
-        public PipelineStep<TStart, TNext> AddStep<T, TNext>(Expression<Func<T, TNext>> expression, [CanBeNull] string name = null)
+        public PipelineStep<TStart, TStart> SetName(string pipelineName)
+        {
+            Name = pipelineName;
+            return new PipelineStep<TStart, TStart>(this);
+        }
+
+        public PipelineStep<TStart, TNext> AddStep<T, TNext>(string pipelineName, Expression<Func<T, TNext>> expression, [CanBeNull] string name = null)
             where T : IPipelineTask<TStart>
         {
+            Name = pipelineName;
             return new PipelineStep<TStart, TStart>(this).AddStep(expression, name);
         }
 
-        public PipelineStep<TStart, TNext> AddStep<T, TNext>(Expression<Func<T, Task<TNext>>> expression, [CanBeNull] string name = null)
+        public PipelineStep<TStart, TNext> AddStep<T, TNext>(string pipelineName, Expression<Func<T, Task<TNext>>> expression, [CanBeNull] string name = null)
             where T : IPipelineTask<TStart>
         {
+            Name = pipelineName;
             return new PipelineStep<TStart, TStart>(this).AddStep(expression, name);
         }
 
         public PipelineExecutor<TStart> CreateExecutor()
         {
-            return new PipelineExecutor<TStart>(Steps, StorageDelegate, ExecutorDelegate);
+            return new PipelineExecutor<TStart>(Name, Steps, StorageDelegate, ExecutorDelegate);
         }
     }
 }

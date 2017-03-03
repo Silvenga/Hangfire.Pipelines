@@ -9,14 +9,17 @@ namespace Hangfire.Pipelines.Core
 {
     public class PipelineExecutor<TEntity>
     {
+        public string PipelineName { get; }
         public ImmutableArray<IExpressionContainer> Steps { get; }
         public CreatePipelineStorage StorageDelegate { get; }
         public CreateStepExecutor ExecutorDelegate { get; }
 
-        public PipelineExecutor([NotNull] IEnumerable<IExpressionContainer> steps, [NotNull] CreatePipelineStorage storageDelegate,
+        public PipelineExecutor(string pipelineName, [NotNull] IEnumerable<IExpressionContainer> steps, [NotNull] CreatePipelineStorage storageDelegate,
                                 [NotNull] CreateStepExecutor executorDelegate)
         {
+            PipelineName = pipelineName;
             Steps = steps.ToImmutableArray();
+            PipelineName = pipelineName;
             StorageDelegate = storageDelegate;
             ExecutorDelegate = executorDelegate;
 
@@ -52,6 +55,11 @@ namespace Hangfire.Pipelines.Core
             localExecutor.CompletedRun(id);
 
             return id;
+        }
+
+        public override string ToString()
+        {
+            return $"{PipelineName}: {string.Join(" -> ", Steps)}";
         }
     }
 }
