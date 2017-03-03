@@ -10,28 +10,14 @@ namespace Hangfire.Pipelines.Core
 {
     public interface IPipelineInterceptor
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="jobType"></param>
-        /// <param name="task"></param>
-        /// <param name="getPipelineId">Lazy invocation to get the current pipelineId, this will execute on the current thread.</param>
-        /// <param name="storage"></param>
-        void SetUpContext(Type jobType, object task, Func<Guid> getPipelineId, IPipelineStorage storage);
+        void SetUpContext(Type jobType, object task, IPipelineStorage storage, Func<Guid> getPipelineId, Func<string> pipelineName, Func<string> stepName);
 
         void TearDownContext(object result, IPipelineStorage storage, Guid pipelineId);
     }
 
     public class PipelineInterceptor : IPipelineInterceptor
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="jobType"></param>
-        /// <param name="task"></param>
-        /// <param name="getPipelineId">Lazy invocation to get the current pipelineId, this will execute on the current thread.</param>
-        /// <param name="storage"></param>
-        public virtual void SetUpContext(Type jobType, object task, Func<Guid> getPipelineId, IPipelineStorage storage)
+        public virtual void SetUpContext(Type jobType, object task, IPipelineStorage storage, Func<Guid> getPipelineId, Func<string> pipelineName, Func<string> stepName)
         {
             var pipelineTaskType = GetPipelineTaskType(jobType);
             if (pipelineTaskType == null)

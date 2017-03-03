@@ -33,8 +33,8 @@ namespace Hangfire.Pipelines.Core
             name = name ?? $"Step {nextIndex}";
             var container = new ExpressionContainer(
                 $"{name} ({expression})",
-                (executor, pipelineId) => executor.RunNew(expression, pipelineId, name),
-                (executor, pipelineId, parrentId) => executor.RunContinuation(expression, pipelineId, parrentId, name)
+                (executor, pipelineId) => executor.RunNew(expression, pipelineId, _definition.Name, name),
+                (executor, pipelineId, parrentId) => executor.RunContinuation(expression, pipelineId, parrentId, _definition.Name, name)
             );
             _definition.Steps.Add(container);
         }
@@ -45,8 +45,8 @@ namespace Hangfire.Pipelines.Core
             name = name ?? $"Step {nextIndex}";
             var container = new ExpressionContainer(
                 $"{name} ({expression})",
-                (executor, pipelineId) => executor.RunNew(expression, pipelineId, name),
-                (executor, pipelineId, parrentId) => executor.RunContinuation(expression, pipelineId, parrentId, name)
+                (executor, pipelineId) => executor.RunNew(expression, pipelineId, _definition.Name, name),
+                (executor, pipelineId, parrentId) => executor.RunContinuation(expression, pipelineId, parrentId, _definition.Name, name)
             );
             _definition.Steps.Add(container);
         }

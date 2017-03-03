@@ -14,5 +14,6 @@ namespace Hangfire.Pipelines.Core
         public const string PipelineEntityKey = "PipelineEntity";
         public const string PipelineIdKey = "PipelineId";
         public const string StepName = "StepName";
+        public const string PipelineName = "PipelineName";
     }
 }

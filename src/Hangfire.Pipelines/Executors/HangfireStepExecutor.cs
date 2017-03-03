@@ -22,36 +22,41 @@ namespace Hangfire.Pipelines.Executors
         {
         }
 
-        public string RunNew<T>(Expression<Action<T>> expression, Guid pipelineId, string stepName)
+        public string RunNew<T>(Expression<Action<T>> expression, Guid pipelineId, string pipelineName, string stepName)
         {
             return _client
                 .AddOrUpdateMeta(Constants.PipelineIdKey, pipelineId)
+                .AddOrUpdateMeta(Constants.PipelineName, pipelineName)
                 .AddOrUpdateMeta(Constants.StepName, stepName)
                 .Enqueue(expression);
         }
 
-        public string RunNew<T, TResult>(Expression<Func<T, TResult>> expression, Guid pipelineId, string stepName)
+        public string RunNew<T, TResult>(Expression<Func<T, TResult>> expression, Guid pipelineId, string pipelineName, string stepName)
         {
             var enqueuedState = new EnqueuedState();
             return _client
                 .AddOrUpdateMeta(Constants.PipelineIdKey, pipelineId)
+                .AddOrUpdateMeta(Constants.PipelineName, pipelineName)
                 .AddOrUpdateMeta(Constants.StepName, stepName)
                 .Create(GetJob<T>(expression), enqueuedState);
         }
 
-        public string RunContinuation<T>(Expression<Action<T>> expression, Guid pipelineId, string parrentId, string stepName)
+        public string RunContinuation<T>(Expression<Action<T>> expression, Guid pipelineId, string parrentId, string pipelineName, string stepName)
         {
             return _client
                 .AddOrUpdateMeta(Constants.PipelineIdKey, pipelineId)
+                .AddOrUpdateMeta(Constants.PipelineName, pipelineName)
                 .AddOrUpdateMeta(Constants.StepName, stepName)
                 .ContinueWith(parrentId, expression);
         }
 
-        public string RunContinuation<T, TResult>(Expression<Func<T, TResult>> expression, Guid pipelineId, string parrentId, string stepName)
+        public string RunContinuation<T, TResult>(Expression<Func<T, TResult>> expression, Guid pipelineId, string parrentId, string pipelineName,
+                                                  string stepName)
         {
             var awaitingState = new AwaitingState(parrentId, new EnqueuedState(), JobContinuationOptions.OnlyOnSucceededState);
             return _client
                 .AddOrUpdateMeta(Constants.PipelineIdKey, pipelineId)
+                .AddOrUpdateMeta(Constants.PipelineName, pipelineName)
                 .AddOrUpdateMeta(Constants.StepName, stepName)
                 .Create(GetJob<T>(expression), awaitingState);
         }

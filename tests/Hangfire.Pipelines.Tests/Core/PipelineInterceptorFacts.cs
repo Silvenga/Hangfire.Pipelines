@@ -25,9 +25,11 @@ namespace Hangfire.Pipelines.Tests.Core
         {
             var step = Autofixture.Create<object>();
             var interceptor = new PipelineInterceptor();
+            var pipelineName = Autofixture.Create<string>();
+            var stepName = Autofixture.Create<string>();
 
             // Act
-            interceptor.SetUpContext(typeof(object), step, () => default(Guid), _storage);
+            interceptor.SetUpContext(typeof(object), step, _storage, () => default(Guid),()=> pipelineName, () => stepName);
 
             // Assert
         }
@@ -37,9 +39,11 @@ namespace Hangfire.Pipelines.Tests.Core
         {
             var step = Substitute.ForPartsOf<MockStep>();
             var interceptor = new PipelineInterceptor();
+            var pipelineName = Autofixture.Create<string>();
+            var stepName = Autofixture.Create<string>();
 
             // Act
-            interceptor.SetUpContext(typeof(MockStep), step, () => default(Guid), _storage);
+            interceptor.SetUpContext(typeof(MockStep), step, _storage, () => default(Guid), () => pipelineName, () => stepName);
 
             // Assert
             step.PipelineContext.Should().NotBeNull();
@@ -51,9 +55,11 @@ namespace Hangfire.Pipelines.Tests.Core
             var step = Substitute.ForPartsOf<MockStep>();
             var pipelineId = Autofixture.Create<Guid>();
             var interceptor = new PipelineInterceptor();
+            var pipelineName = Autofixture.Create<string>();
+            var stepName = Autofixture.Create<string>();
 
             // Act
-            interceptor.SetUpContext(typeof(MockStep), step, () => pipelineId, _storage);
+            interceptor.SetUpContext(typeof(MockStep), step, _storage, () => pipelineId, () => pipelineName, () => stepName);
 
             // Assert
             step.PipelineContext.PipelineId.Should().Be(pipelineId);
@@ -64,9 +70,11 @@ namespace Hangfire.Pipelines.Tests.Core
         {
             var step = Substitute.ForPartsOf<MockStep>();
             var interceptor = new PipelineInterceptor();
+            var pipelineName = Autofixture.Create<string>();
+            var stepName = Autofixture.Create<string>();
 
             // Act
-            interceptor.SetUpContext(typeof(MockStep), step, () => default(Guid), _storage);
+            interceptor.SetUpContext(typeof(MockStep), step, _storage, () => default(Guid), () => pipelineName, () => stepName);
 
             // Assert
             step.PipelineContext.Storage.Should().Be(_storage);
@@ -77,11 +85,13 @@ namespace Hangfire.Pipelines.Tests.Core
         {
             var step = Substitute.For<MockStep>();
             var pipelineId = Autofixture.Create<Guid>();
+            var pipelineName = Autofixture.Create<string>();
+            var stepName = Autofixture.Create<string>();
 
             var interceptor = new PipelineInterceptor();
 
             // Act
-            interceptor.SetUpContext(typeof(MockStep), step, () => pipelineId, _storage);
+            interceptor.SetUpContext(typeof(MockStep), step, _storage, () => pipelineId, () => pipelineName, () => stepName);
 
             // Assert
             _storage.Received().Get<string>(pipelineId, "PipelineEntity");

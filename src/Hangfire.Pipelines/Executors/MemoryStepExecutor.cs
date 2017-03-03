@@ -22,24 +22,25 @@ namespace Hangfire.Pipelines.Executors
         {
         }
 
-        public string RunNew<T>(Expression<Action<T>> expression, Guid pipelineId, string stepName)
+        public string RunNew<T>(Expression<Action<T>> expression, Guid pipelineId, string pipelineName, string stepName)
         {
-            return RunInMemory<T, object>(x => ToNullExpression<T, object>(x, expression), pipelineId);
+            return RunInMemory<T, object>(x => ToNullExpression<T, object>(x, expression), pipelineId, pipelineName, stepName);
         }
 
-        public string RunNew<T, TResult>(Expression<Func<T, TResult>> expression, Guid pipelineId, string stepName)
+        public string RunNew<T, TResult>(Expression<Func<T, TResult>> expression, Guid pipelineId, string pipelineName, string stepName)
         {
-            return RunInMemory(expression, pipelineId);
+            return RunInMemory(expression, pipelineId, pipelineName, stepName);
         }
 
-        public string RunContinuation<T>(Expression<Action<T>> expression, Guid pipelineId, string parrentId, string stepName)
+        public string RunContinuation<T>(Expression<Action<T>> expression, Guid pipelineId, string parrentId, string pipelineName, string stepName)
         {
-            return RunInMemory<T, object>(x => ToNullExpression<T, object>(x, expression), pipelineId);
+            return RunInMemory<T, object>(x => ToNullExpression<T, object>(x, expression), pipelineId, pipelineName, stepName);
         }
 
-        public string RunContinuation<T, TResult>(Expression<Func<T, TResult>> expression, Guid pipelineId, string parrentId, string stepName)
+        public string RunContinuation<T, TResult>(Expression<Func<T, TResult>> expression, Guid pipelineId, string parrentId, string pipelineName,
+                                                  string stepName)
         {
-            return RunInMemory(expression, pipelineId);
+            return RunInMemory(expression, pipelineId, pipelineName, stepName);
         }
 
         public void CompletedRun(Guid pipelineId)
@@ -52,12 +53,12 @@ namespace Hangfire.Pipelines.Executors
             return default(TResult);
         }
 
-        protected virtual string RunInMemory<T, TResult>(Expression<Func<T, TResult>> expression, Guid pipelineId)
+        protected virtual string RunInMemory<T, TResult>(Expression<Func<T, TResult>> expression, Guid pipelineId, string pipelineName, string stepName)
         {
             var activatedJob = CreateObject<T>();
             var jobType = typeof(T);
 
-            _interceptor.SetUpContext(jobType, activatedJob, () => pipelineId, _storage);
+            _interceptor.SetUpContext(jobType, activatedJob, _storage, () => pipelineId, () => pipelineName, () => stepName);
 
             object value = null;
             var result = expression.Compile().Invoke(activatedJob);

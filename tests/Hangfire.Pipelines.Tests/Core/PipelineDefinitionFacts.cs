@@ -41,13 +41,14 @@ namespace Hangfire.Pipelines.Tests.Core
             var storage = Substitute.For<IPipelineStorage>();
             var executor = Substitute.For<IStepExecutor>();
             var steps = new List<IExpressionContainer>();
+            var pipelineName = Autofixture.Create<string>();
             var stepName = Autofixture.Create<string>();
 
             var definition = new PipelineDefinition<object>(storage, executor, steps);
 
             // Act
             var expression = Autofixture.Create<Expression<Func<PipelineTask, object>>>();
-            definition.SetName("Test").AddStep(expression, stepName);
+            definition.SetName(pipelineName).AddStep(expression, stepName);
 
             // Assert
             var subject = steps.Should().ContainSingle().Subject;
@@ -55,11 +56,11 @@ namespace Hangfire.Pipelines.Tests.Core
             var pipelineId = Autofixture.Create<Guid>();
 
             subject.StartNew(executor, pipelineId);
-            executor.Received().RunNew(expression, pipelineId, stepName);
+            executor.Received().RunNew(expression, pipelineId, pipelineName, stepName);
 
             var parrentId = Autofixture.Create<string>();
             subject.StartContinuation(executor, pipelineId, parrentId);
-            executor.Received().RunContinuation(expression, pipelineId, parrentId, stepName);
+            executor.Received().RunContinuation(expression, pipelineId, parrentId, pipelineName, stepName);
         }
 
         [Fact]
@@ -68,12 +69,13 @@ namespace Hangfire.Pipelines.Tests.Core
             var storage = Substitute.For<IPipelineStorage>();
             var executor = Substitute.For<IStepExecutor>();
             var steps = new List<IExpressionContainer>();
+            var pipelineName = Autofixture.Create<string>();
 
             var definition = new PipelineDefinition<object>(storage, executor, steps);
 
             // Act
             var expression = Autofixture.Create<Expression<Func<PipelineTask, object>>>();
-            definition.SetName("Test").AddStep(expression);
+            definition.SetName(pipelineName).AddStep(expression);
 
             // Assert
             var subject = steps.Should().ContainSingle().Subject;
@@ -83,11 +85,11 @@ namespace Hangfire.Pipelines.Tests.Core
             const string defaultName = "Step 0";
 
             subject.StartNew(executor, pipelineId);
-            executor.Received().RunNew(expression, pipelineId, defaultName);
+            executor.Received().RunNew(expression, pipelineId, pipelineName, defaultName);
 
             var parrentId = Autofixture.Create<string>();
             subject.StartContinuation(executor, pipelineId, parrentId);
-            executor.Received().RunContinuation(expression, pipelineId, parrentId, defaultName);
+            executor.Received().RunContinuation(expression, pipelineId, parrentId, pipelineName, defaultName);
         }
 
         [Fact]

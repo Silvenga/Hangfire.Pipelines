@@ -22,7 +22,8 @@ namespace Hangfire.Pipelines.Core
 
         public void OnMaterialized(Type jobType, object activatedJob, JobActivatorContext context)
         {
-            _interceptor.SetUpContext(jobType, activatedJob, () => context.GetJobParameter<Guid>(Constants.PipelineIdKey), _storage);
+            _interceptor.SetUpContext(jobType, activatedJob, _storage, () => context.GetJobParameter<Guid>(Constants.PipelineIdKey),
+                () => context.GetJobParameter<string>(Constants.PipelineName), () => context.GetJobParameter<string>(Constants.StepName));
         }
 
         public void OnScopeCreating(JobActivatorContext context)
