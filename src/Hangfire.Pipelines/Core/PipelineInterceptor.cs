@@ -8,7 +8,7 @@ using JetBrains.Annotations;
 
 namespace Hangfire.Pipelines.Core
 {
-    public class PipelineInterceptor
+    public interface IPipelineInterceptor
     {
         /// <summary>
         /// 
@@ -17,7 +17,21 @@ namespace Hangfire.Pipelines.Core
         /// <param name="task"></param>
         /// <param name="getPipelineId">Lazy invocation to get the current pipelineId, this will execute on the current thread.</param>
         /// <param name="storage"></param>
-        public void SetUpContext(Type jobType, object task, Func<Guid> getPipelineId, IPipelineStorage storage)
+        void SetUpContext(Type jobType, object task, Func<Guid> getPipelineId, IPipelineStorage storage);
+
+        void TearDownContext(object result, IPipelineStorage storage, Guid pipelineId);
+    }
+
+    public class PipelineInterceptor : IPipelineInterceptor
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="jobType"></param>
+        /// <param name="task"></param>
+        /// <param name="getPipelineId">Lazy invocation to get the current pipelineId, this will execute on the current thread.</param>
+        /// <param name="storage"></param>
+        public virtual void SetUpContext(Type jobType, object task, Func<Guid> getPipelineId, IPipelineStorage storage)
         {
             var pipelineTaskType = GetPipelineTaskType(jobType);
             if (pipelineTaskType == null)
@@ -32,16 +46,9 @@ namespace Hangfire.Pipelines.Core
             pipelineContext.Load();
         }
 
-        public void TearDownContext(Type jobType, object task)
+        public virtual void TearDownContext(object result, IPipelineStorage storage, Guid pipelineId)
         {
-            var pipelineTaskType = GetPipelineTaskType(jobType);
-            if (pipelineTaskType == null)
-            {
-                return;
-            }
-
-            var pipelineContext = GetContext(jobType, task);
-            pipelineContext.Save();
+            storage.Set(pipelineId, Constants.PipelineEntityKey, result);
         }
 
         [CanBeNull]
@@ -56,12 +63,6 @@ namespace Hangfire.Pipelines.Core
         {
             var method = jobType.GetProperty(nameof(IPipelineTask<object>.PipelineContext));
             method.SetValue(task, pipelineContext);
-        }
-
-        private IPipelineContext GetContext(Type jobType, object task)
-        {
-            var method = jobType.GetProperty(nameof(IPipelineTask<object>.PipelineContext));
-            return (IPipelineContext) method.GetValue(task);
         }
 
         private IPipelineContext CreateContext(Type[] typeArgs, [NotNull] IPipelineStorage storage, Guid pipelineId)

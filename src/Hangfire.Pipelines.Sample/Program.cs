@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 using Hangfire.MemoryStorage;
 using Hangfire.Pipelines.Core;
@@ -31,8 +32,8 @@ namespace Hangfire.Pipelines.Sample
 
             var testPipeline = new PipelineDefinition<string>(id => memory, id => stepExecutor);
 
-            testPipeline.AddStep<TestStep>(x => x.Run());
-            testPipeline.AddStep<TestStep>(x => x.Run2());
+            testPipeline.AddStep<TestStep, int>(x => x.Run())
+                        .AddStep<TestStep2, string>(x => x.Run2());
 
             var executor = testPipeline.CreateExecutor();
             executor.Process("test");
@@ -58,13 +59,21 @@ namespace Hangfire.Pipelines.Sample
     {
         public IPipelineContext<string> PipelineContext { get; set; }
 
-        public void Run()
+        public Task<int> Run()
         {
-            PipelineContext.Entity = "test2";
+            Console.WriteLine($"Run {PipelineContext.Entity}");
+            return Task.FromResult(5);
         }
+    }
 
-        public void Run2()
+    public class TestStep2 : IPipelineTask<int>
+    {
+        public IPipelineContext<int> PipelineContext { get; set; }
+
+        public string Run2()
         {
+            Console.WriteLine($"Run2 {PipelineContext.Entity}");
+            return "";
         }
     }
 }

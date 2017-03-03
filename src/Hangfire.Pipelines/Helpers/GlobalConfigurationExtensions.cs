@@ -20,6 +20,7 @@ namespace Hangfire.Pipelines.Helpers
             var activationFilter = new HangfireActivatorInterceptor(new PipelineInterceptor(), pipelineStorage);
             configuration.UseDefaultActivatorInterceptor(activationFilter);
             configuration.UseMetaExtensions();
+            configuration.UseFilter(new HangfireServerInterceptor(new PipelineInterceptor(), pipelineStorage));
 
             return configuration;
         }

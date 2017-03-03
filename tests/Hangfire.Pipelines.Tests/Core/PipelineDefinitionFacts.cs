@@ -46,7 +46,7 @@ namespace Hangfire.Pipelines.Tests.Core
             var definition = new PipelineDefinition<object>(storage, executor, steps);
 
             // Act
-            var expression = Autofixture.Create<Expression<Action<PipelineTask>>>();
+            var expression = Autofixture.Create<Expression<Func<PipelineTask, object>>>();
             definition.AddStep(expression, stepName);
 
             // Assert
@@ -72,7 +72,7 @@ namespace Hangfire.Pipelines.Tests.Core
             var definition = new PipelineDefinition<object>(storage, executor, steps);
 
             // Act
-            var expression = Autofixture.Create<Expression<Action<PipelineTask>>>();
+            var expression = Autofixture.Create<Expression<Func<PipelineTask, object>>>();
             definition.AddStep(expression);
 
             // Assert

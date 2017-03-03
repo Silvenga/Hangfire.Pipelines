@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 using Hangfire.Pipelines.Executors;
 using Hangfire.Pipelines.Models;
@@ -10,12 +11,12 @@ using JetBrains.Annotations;
 
 namespace Hangfire.Pipelines.Core
 {
-    public class PipelineDefinition<TEntity>
+    public class PipelineDefinition<TStart>
     {
         public CreatePipelineStorage StorageDelegate { get; }
         public CreateStepExecutor ExecutorDelegate { get; }
 
-        public IList<IExpressionContainer> Steps { get; }
+        internal IList<IExpressionContainer> Steps { get; }
 
         internal PipelineDefinition(IPipelineStorage storage, IStepExecutor executor, [ItemNotNull] IList<IExpressionContainer> steps)
         {
@@ -31,20 +32,21 @@ namespace Hangfire.Pipelines.Core
             Steps = new List<IExpressionContainer>();
         }
 
-        public void AddStep<T>(Expression<Action<T>> expression, [CanBeNull] string name = null) where T : IPipelineTask<TEntity>
+        public PipelineStep<TStart, TNext> AddStep<T, TNext>(Expression<Func<T, TNext>> expression, [CanBeNull] string name = null)
+            where T : IPipelineTask<TStart>
         {
-            var nextIndex = Steps.Count;
-            name = name ?? $"Step {nextIndex}";
-            var container = new ExpressionContainer(
-                (executor, pipelineId) => executor.RunNew(expression, pipelineId, name),
-                (executor, pipelineId, parrentId) => executor.RunContinuation(expression, pipelineId, parrentId, name)
-            );
-            Steps.Add(container);
+            return new PipelineStep<TStart, TStart>(this).AddStep(expression, name);
         }
 
-        public PipelineExecutor<TEntity> CreateExecutor()
+        public PipelineStep<TStart, TNext> AddStep<T, TNext>(Expression<Func<T, Task<TNext>>> expression, [CanBeNull] string name = null)
+            where T : IPipelineTask<TStart>
         {
-            return new PipelineExecutor<TEntity>(Steps, StorageDelegate, ExecutorDelegate);
+            return new PipelineStep<TStart, TStart>(this).AddStep(expression, name);
+        }
+
+        public PipelineExecutor<TStart> CreateExecutor()
+        {
+            return new PipelineExecutor<TStart>(Steps, StorageDelegate, ExecutorDelegate);
         }
     }
 }

@@ -12,7 +12,8 @@
     <AssemblyName>Hangfire.Pipelines</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <NuGetPackageImportStamp>da19dfb8</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -64,7 +65,9 @@
   <ItemGroup>
     <Compile Include="Core\Constants.cs" />
     <Compile Include="Core\HangfireActivatorInterceptor.cs" />
+    <Compile Include="Core\HangfireServerInterceptor.cs" />
     <Compile Include="Core\PipelineInterceptor.cs" />
+    <Compile Include="Core\PipelineStep.cs" />
     <Compile Include="Executors\HangfireStepExecutor.cs" />
     <Compile Include="Executors\IStepExecutor.cs" />
     <Compile Include="Core\PipelineExecutor.cs" />

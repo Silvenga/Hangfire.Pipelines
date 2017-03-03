@@ -24,6 +24,7 @@ using System;
 
 // ReSharper disable CommentTypo
 // ReSharper disable IdentifierTypo
+// ncrunch: no coverage start
 
 #pragma warning disable 1591
 // ReSharper disable UnusedMember.Global
@@ -1204,3 +1205,4 @@ namespace JetBrains.Annotations
     {
     }
 }
+// ncrunch: no coverage end

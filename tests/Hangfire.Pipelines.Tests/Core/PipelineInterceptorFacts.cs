@@ -90,30 +90,16 @@ namespace Hangfire.Pipelines.Tests.Core
         [Fact]
         public void On_TearDownContext_save_entity()
         {
-            var pipelineContext = Substitute.For<IPipelineContext<string>>();
-            var step = Substitute.ForPartsOf<MockStep>();
-            step.PipelineContext.Returns(pipelineContext);
+            var result = Autofixture.Create<object>();
+            var pipelineId = Autofixture.Create<Guid>();
 
             var interceptor = new PipelineInterceptor();
 
             // Act
-            interceptor.TearDownContext(typeof(MockStep), step);
+            interceptor.TearDownContext(result, _storage, pipelineId);
 
             // Assert
-            pipelineContext.Received().Save();
-        }
-
-        [Fact]
-        public void On_TearDownContext_and_not_pipeline_task_do_nothing()
-        {
-            var step = Autofixture.Create<object>();
-
-            var interceptor = new PipelineInterceptor();
-
-            // Act
-            interceptor.TearDownContext(typeof(object), step);
-
-            // Assert
+            _storage.Received().Set(pipelineId, "PipelineEntity", result);
         }
     }
 

@@ -7,7 +7,9 @@ namespace Hangfire.Pipelines.Executors
     {
         void StartedRun(Guid pipelineId);
         string RunNew<T>(Expression<Action<T>> expression, Guid pipelineId, string stepName);
+        string RunNew<T, TResult>(Expression<Func<T, TResult>> expression, Guid pipelineId, string stepName);
         string RunContinuation<T>(Expression<Action<T>> expression, Guid pipelineId, string parrentId, string stepName);
+        string RunContinuation<T, TResult>(Expression<Func<T, TResult>> expression, Guid pipelineId, string parrentId, string stepName);
         void CompletedRun(Guid pipelineId);
     }
 }

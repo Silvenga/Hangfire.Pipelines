@@ -7,10 +7,10 @@ namespace Hangfire.Pipelines.Core
 {
     public class HangfireActivatorInterceptor : IJobActivatorFilter
     {
-        private readonly PipelineInterceptor _interceptor;
+        private readonly IPipelineInterceptor _interceptor;
         private readonly IPipelineStorage _storage;
 
-        public HangfireActivatorInterceptor(PipelineInterceptor interceptor, IPipelineStorage storage)
+        public HangfireActivatorInterceptor(IPipelineInterceptor interceptor, IPipelineStorage storage)
         {
             _interceptor = interceptor;
             _storage = storage;
@@ -35,7 +35,6 @@ namespace Hangfire.Pipelines.Core
 
         public void OnScopeDisposing(Type jobType, object activatedJob, JobActivatorContext context)
         {
-            _interceptor.TearDownContext(jobType, activatedJob);
         }
 
         public void OnScopeDisposed(Type jobType, object activatedJob, JobActivatorContext context)
